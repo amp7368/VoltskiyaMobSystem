@@ -1,0 +1,6 @@
+name: VoltskiyaMobSystem
+version: 1.0
+main: voltskiya.mob.system.VoltskiyaPlugin
+api-version: 1.19
+authors: [ appleptr16 ]
+softdepend: [ LuckPerms, LoadDependencies, DecodingNms, VoltskiyaUtilities , AppleConfigs ]
