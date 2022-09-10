@@ -1,12 +1,12 @@
 package voltskiya.mob.system.temperature;
 
-import java.util.Map;
+import java.util.EnumMap;
 import voltskiya.mob.system.base.biome.BiomeUUID;
-import voltskiya.mob.system.spawning.conditions.TimeOfDay;
+import voltskiya.mob.system.spawning.rule.TimeOfDay;
 
 public class BiomeTemperature {
 
     private BiomeUUID uuid;
-    private Map<TimeOfDay, WeatherConditions> dailyTemperatures;
+    private EnumMap<TimeOfDay, WeatherConditions> dailyTemperatures;
 
 }

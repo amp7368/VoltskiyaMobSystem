@@ -1,6 +1,8 @@
 package voltskiya.mob.system.spawning;
 
 import apple.lib.pmc.PluginModule;
+import voltskiya.mob.system.spawning.world.watch.WatchPlayer;
+import voltskiya.mob.system.spawning.world.watch.WatchPlayerListener;
 
 public class ModuleSpawning extends PluginModule {
 
@@ -16,7 +18,8 @@ public class ModuleSpawning extends PluginModule {
 
     @Override
     public void enable() {
-
+        new WatchPlayerListener();
+        WatchPlayer.load();
     }
 
     @Override

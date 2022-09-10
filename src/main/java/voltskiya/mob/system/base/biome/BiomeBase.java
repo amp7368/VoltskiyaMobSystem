@@ -2,7 +2,7 @@ package voltskiya.mob.system.base.biome;
 
 import net.minecraft.resources.ResourceLocation;
 
-public class BiomeBase {
+public class BiomeBase extends BiomeUUID {
 
     private BiomeUUID uuid = new BiomeUUID();
     private ResourceLocation minecraftKey;
