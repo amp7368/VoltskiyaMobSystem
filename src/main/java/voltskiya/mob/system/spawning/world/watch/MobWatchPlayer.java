@@ -3,7 +3,9 @@ package voltskiya.mob.system.spawning.world.watch;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import voltskiya.mob.system.VoltskiyaPlugin;
 import voltskiya.mob.system.spawning.storage.MobStorage;
+import voltskiya.mob.system.spawning.storage.SpawnMobsRegion;
 
 public interface MobWatchPlayer extends WatchHasPlayer {
 
@@ -14,10 +16,8 @@ public interface MobWatchPlayer extends WatchHasPlayer {
         int centerChunkX = centerChunk.getX();
         int centerChunkZ = centerChunk.getZ();
         int spawnChunkRadius = WatchPlayerConfig.get().getMob().getSpawningChunkRadius();
-        int lowerX = centerChunkX - spawnChunkRadius;
-        int upperX = centerChunkX + spawnChunkRadius;
-        int lowerZ = centerChunkZ - spawnChunkRadius;
-        int upperZ = centerChunkZ + spawnChunkRadius;
-        MobStorage.spawnMobs(lowerX, upperX, lowerZ, upperZ, playerLocation.getWorld());
+        SpawnMobsRegion region = new SpawnMobsRegion(centerChunkX, centerChunkZ, spawnChunkRadius,
+            playerLocation.getWorld());
+        queue(() -> MobStorage.spawnMobs(region));
     }
 }

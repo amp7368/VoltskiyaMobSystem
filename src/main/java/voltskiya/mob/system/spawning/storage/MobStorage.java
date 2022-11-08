@@ -1,20 +1,33 @@
 package voltskiya.mob.system.spawning.storage;
 
+import io.ebean.DB;
+import io.ebean.Transaction;
 import java.util.List;
-import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+import voltskiya.mob.system.spawning.storage.query.QStoredMob;
+import voltskiya.mob.system.spawning.world.mob.MobWorldSpawning;
 
 public class MobStorage {
-    public static void load(){
 
-    }
-    public void regen() {
+    public static void spawnMobs(SpawnMobsRegion region) {
+        List<StoredMob> result;
+        try (Transaction transaction = DB.getDefault().beginTransaction()) {
+            result = queryRegion(region, transaction).findList();
+            queryRegion(region, transaction).delete();
+            transaction.commit();
+        }
+        MobWorldSpawning.spawnMobs(result);
     }
 
-    public static void spawnMobs(int lowerX, int upperX, int lowerZ, int upperZ, World world) {
-        //TODO
+    @NotNull
+    private static QStoredMob queryRegion(SpawnMobsRegion region, Transaction transaction) {
+        return new QStoredMob().usingTransaction(transaction).where().and().location.world.eq(
+            region.getWorldId()).location.x.between(region.getLowerX(),
+            region.getUpperX()).location.z.between(region.getLowerZ(),
+            region.getUpperZ()).spawnDelay.eq(0).endAnd();
     }
 
     public static void insertMobs(List<StoredMob> mobsToAddBack) {
-        //TODO
+        DB.getDefault().insertAll(mobsToAddBack);
     }
 }

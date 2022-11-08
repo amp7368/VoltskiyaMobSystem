@@ -16,7 +16,7 @@ import voltskiya.mob.system.spawning.ModuleSpawning;
 
 public class MobTypeDatabase {
 
-    private String MOB_TYPE_PREFIX = "volt.mob.";
+    private final String MOB_TYPE_PREFIX = "volt.mob.";
     private static AppleAJDInst<MobTypeDatabase, AsyncTaskQueue> manager;
 
     private final Map<MobUUID, MobType> mobs = new HashMap<>();

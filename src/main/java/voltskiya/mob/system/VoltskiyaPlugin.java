@@ -10,6 +10,7 @@ import voltskiya.mob.system.temperature.ModuleTemperature;
 
 public class VoltskiyaPlugin extends ApplePlugin {
 
+    public static final int BLOCKS_IN_CHUNK = 16;
     private static VoltskiyaPlugin instance;
 
     public VoltskiyaPlugin() {
@@ -22,6 +23,6 @@ public class VoltskiyaPlugin extends ApplePlugin {
 
     @Override
     public List<PluginModule> getModules() {
-        return List.of(new ModuleSpawning(),new ModuleBase(),new ModuleTemperature());
+        return List.of(new ModuleSpawning(), new ModuleBase(), new ModuleTemperature());
     }
 }

@@ -47,17 +47,14 @@ dependencies {
     compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 
     compileOnly 'de.tr7zw:item-nbt-api-plugin:2.10.0'
-    compileOnly 'org.hibernate:hibernate-core:6.1.2.Final'
 
     compileOnly 'org.jetbrains:annotations:23.0.0'
-    compileOnly 'com.google.code.gson:gson:2.9.0'
+    compileOnly 'com.google.code.gson:gson:2.10'
 
-    annotationProcessor "io.ebean:querybean-generator:12.6.5"
-
+    annotationProcessor 'io.ebean:querybean-generator:13.10.0'
     implementation "org.avaje.composite:logback:1.1"
-
-    implementation "io.ebean:ebean:12.6.5"
-    implementation "io.ebean:ebean-querybean:12.6.5"
+    implementation 'io.ebean:ebean:13.10.0'
+    implementation 'io.ebean:ebean-querybean:13.10.0'
 }
 ebean {
     debugLevel = 0 //0 - 9

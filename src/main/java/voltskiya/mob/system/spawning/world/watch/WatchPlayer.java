@@ -1,18 +1,21 @@
 package voltskiya.mob.system.spawning.world.watch;
 
+import io.netty.util.concurrent.UnorderedThreadPoolEventExecutor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadPoolExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import voltskiya.mob.system.VoltskiyaPlugin;
 
-public class WatchPlayer implements WatchHasPlayer {
+public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
 
     private static final Map<UUID, WatchPlayer> watches = new HashMap<>();
 
     private final Player player;
+    private final ThreadPoolExecutor threadPool = new UnorderedThreadPoolEventExecutor(5);
 
     private WatchPlayer(Player player) {
         this.player = player;
@@ -36,8 +39,11 @@ public class WatchPlayer implements WatchHasPlayer {
     }
 
     private void tick() {
-        if (!player.isOnline())
+        if (!player.isOnline()) {
             remove(player);
+            return;
+        }
+        tickWatchPlayer();
     }
 
     private static void remove(Player player) {
@@ -55,5 +61,10 @@ public class WatchPlayer implements WatchHasPlayer {
     @Override
     public Player getPlayer() {
         return this.player;
+    }
+
+    @Override
+    public ThreadPoolExecutor getThreadPool() {
+        return this.threadPool;
     }
 }

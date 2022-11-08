@@ -16,9 +16,9 @@ import voltskiya.mob.system.spawning.world.watch.WatchPlayerConfig;
 
 public class MobWorldSpawning {
 
-    public static void spawnMobs(List<StoredMob> nearbyMobs) {
+    public static void spawnMobs(List<StoredMob> mobs) {
         List<StoredMob> mobsToAddBack = new ArrayList<>();
-        for (StoredMob storedMob : nearbyMobs) {
+        for (StoredMob storedMob : mobs) {
             long spawnDelay = trySpawn(storedMob).getSpawnDelay();
             if (spawnDelay > 0) {
                 storedMob.setSpawnDelay(spawnDelay);
