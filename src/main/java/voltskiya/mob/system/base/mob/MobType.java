@@ -5,7 +5,7 @@ import apple.utilities.json.gson.GsonBuilderDynamic;
 import java.util.function.Consumer;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import voltskiya.mob.system.spawning.spawner.MobTypeSpawner;
+import voltskiya.mob.system.spawn.spawner.MobTypeSpawner;
 
 public class MobType {
 

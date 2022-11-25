@@ -2,14 +2,18 @@ package voltskiya.mob.system.base;
 
 public class VoltskiyaMobDatabaseConfig {
 
-    private String username = "${username}";
-    private String password = "${password}";
-    private String host = "${host}";
-    private String port = "${port}";
-    private String database = "MobSystem";
+    public String username = "${username}";
+    public String password = "${password}";
+    public String host = "${host}";
+    public String port = "${port}";
+    public String database = "mob_system";
 
     public String getUrl() {
         return "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database;
+    }
+
+    public String getDatabase() {
+        return this.database;
     }
 
     public String getUsername() {

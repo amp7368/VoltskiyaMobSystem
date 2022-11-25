@@ -1,22 +1,22 @@
 package voltskiya.mob.system.base.world;
 
-import apple.lib.pmc.FileIOServiceNow;
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDInst;
-import apple.utilities.threading.service.queue.AsyncTaskQueue;
 import com.google.common.collect.HashBiMap;
+import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.World;
-import voltskiya.mob.system.spawning.ModuleSpawning;
+import voltskiya.mob.system.spawn.ModuleSpawning;
 
 public class WorldDatabase {
 
-    private static AppleAJDInst<WorldDatabase, AsyncTaskQueue> manager;
+    private static AppleAJDInst<WorldDatabase> manager;
     private transient Map<UUID, Short> uuidToId = HashBiMap.create();
     private transient short nextId;
-    private Map<Short, UUID> worlds = HashBiMap.create();
+    private Map<Short, UUID> worlds = new HashMap<>();
 
     public static void load() {
         File file = ModuleSpawning.get().getFile("Worlds.json");
@@ -30,6 +30,10 @@ public class WorldDatabase {
         return manager.getInstance();
     }
 
+    private static void save() {
+        manager.save();
+    }
+
     public synchronized short getWorld(UUID uuid) {
         Short id = uuidToId.get(uuid);
         if (id != null)
@@ -37,8 +41,10 @@ public class WorldDatabase {
         id = nextId++;
         uuidToId.put(uuid, id);
         worlds.put(id, uuid);
+        save();
         return id;
     }
+
 
     public synchronized UUID getWorld(short id) {
         return worlds.get(id);

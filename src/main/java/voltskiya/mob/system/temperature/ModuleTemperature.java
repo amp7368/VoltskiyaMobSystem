@@ -1,8 +1,8 @@
 package voltskiya.mob.system.temperature;
 
-import apple.lib.pmc.PluginModule;
+import com.voltskiya.lib.AbstractModule;
 
-public class ModuleTemperature extends PluginModule {
+public class ModuleTemperature extends AbstractModule {
 
     private static ModuleTemperature instance;
 

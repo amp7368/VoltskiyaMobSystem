@@ -1,23 +1,22 @@
 package voltskiya.mob.system.base.mob;
 
-import apple.lib.pmc.FileIOServiceNow;
 import apple.mc.utilities.data.serialize.GsonSerializeMC;
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDInst;
 import apple.utilities.json.gson.GsonBuilderDynamic;
-import apple.utilities.threading.service.queue.AsyncTaskQueue;
+import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.spawning.ModuleSpawning;
+import voltskiya.mob.system.spawn.ModuleSpawning;
 
 public class MobTypeDatabase {
 
     private final String MOB_TYPE_PREFIX = "volt.mob.";
-    private static AppleAJDInst<MobTypeDatabase, AsyncTaskQueue> manager;
+    private static AppleAJDInst<MobTypeDatabase> manager;
 
     private final Map<MobUUID, MobType> mobs = new HashMap<>();
     private transient final Map<String, MobUUID> nameToMob = new HashMap<>();

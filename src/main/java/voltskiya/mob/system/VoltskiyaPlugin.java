@@ -1,14 +1,14 @@
 package voltskiya.mob.system;
 
 
-import apple.lib.pmc.ApplePlugin;
-import apple.lib.pmc.PluginModule;
+import com.voltskiya.lib.AbstractModule;
+import com.voltskiya.lib.AbstractVoltPlugin;
 import java.util.List;
 import voltskiya.mob.system.base.ModuleBase;
-import voltskiya.mob.system.spawning.ModuleSpawning;
+import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.temperature.ModuleTemperature;
 
-public class VoltskiyaPlugin extends ApplePlugin {
+public class VoltskiyaPlugin extends AbstractVoltPlugin {
 
     public static final int BLOCKS_IN_CHUNK = 16;
     private static VoltskiyaPlugin instance;
@@ -22,7 +22,7 @@ public class VoltskiyaPlugin extends ApplePlugin {
     }
 
     @Override
-    public List<PluginModule> getModules() {
+    public List<AbstractModule> getModules() {
         return List.of(new ModuleSpawning(), new ModuleBase(), new ModuleTemperature());
     }
 }
