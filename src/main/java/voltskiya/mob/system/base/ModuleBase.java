@@ -2,7 +2,7 @@ package voltskiya.mob.system.base;
 
 import com.voltskiya.lib.AbstractModule;
 import voltskiya.mob.system.base.biome.BiomeTypeDatabase;
-import voltskiya.mob.system.base.world.WorldDatabase;
+import voltskiya.mob.system.base.storage.world.WorldDatabase;
 
 public class ModuleBase extends AbstractModule {
 

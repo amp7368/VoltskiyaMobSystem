@@ -10,7 +10,7 @@ import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.spawn.ModuleSpawning;
-import voltskiya.mob.system.spawn.spawner.BiomeSpawner;
+import voltskiya.mob.system.base.spawner.BiomeSpawner;
 import voltskiya.mob.system.temperature.BiomeTemperature;
 import voltskiya.mob.system.temperature.ModuleTemperature;
 

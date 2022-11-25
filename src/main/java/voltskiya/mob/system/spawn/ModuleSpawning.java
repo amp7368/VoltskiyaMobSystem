@@ -3,9 +3,7 @@ package voltskiya.mob.system.spawn;
 import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.factory.AppleConfigLike;
 import java.util.List;
-import voltskiya.mob.system.spawn.world.watch.WatchPlayer;
-import voltskiya.mob.system.spawn.world.watch.WatchPlayerConfig;
-import voltskiya.mob.system.spawn.world.watch.WatchPlayerListener;
+import voltskiya.mob.system.player.world.watch.WatchPlayerConfig;
 
 public class ModuleSpawning extends AbstractModule {
 
@@ -21,8 +19,6 @@ public class ModuleSpawning extends AbstractModule {
 
     @Override
     public void enable() {
-        new WatchPlayerListener();
-        WatchPlayer.load();
     }
 
     @Override

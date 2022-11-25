@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.VoltskiyaPlugin;
-import voltskiya.mob.system.spawn.storage.StoredMob;
+import voltskiya.mob.system.base.storage.mob.StoredMob;
 
 public class VoltskiyaMobDatabase {
 
