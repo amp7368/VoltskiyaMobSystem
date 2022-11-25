@@ -1,25 +1,24 @@
 package voltskiya.mob.system.base.biome;
 
-import apple.lib.pmc.FileIOServiceNow;
 import apple.mc.utilities.data.serialize.GsonSerializeMC;
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDInst;
-import apple.utilities.threading.service.queue.AsyncTaskQueue;
+import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.base.ModuleBase;
-import voltskiya.mob.system.spawning.ModuleSpawning;
-import voltskiya.mob.system.spawning.spawner.BiomeSpawning;
+import voltskiya.mob.system.spawn.ModuleSpawning;
+import voltskiya.mob.system.spawn.spawner.BiomeSpawner;
 import voltskiya.mob.system.temperature.BiomeTemperature;
 import voltskiya.mob.system.temperature.ModuleTemperature;
 
 public class BiomeTypeDatabase {
 
-    private static AppleAJDInst<BiomeSpawningDatabase, AsyncTaskQueue> spawningManager;
-    private static AppleAJDInst<BiomeTemperatureDatabase, AsyncTaskQueue> temperatureManager;
-    private static AppleAJDInst<BiomeTypeDatabase, AsyncTaskQueue> baseManager;
+    private static AppleAJDInst<BiomeSpawningDatabase> spawningManager;
+    private static AppleAJDInst<BiomeTemperatureDatabase> temperatureManager;
+    private static AppleAJDInst<BiomeTypeDatabase> baseManager;
 
     private final Map<BiomeUUID, BiomeBase> biomes = new HashMap<>();
     private final Map<NamespacedKey, BiomeUUID> minecraftToBiome = new HashMap<>();
@@ -56,13 +55,13 @@ public class BiomeTypeDatabase {
     public static BiomeUUID getBiomeUUID(NamespacedKey key) {
         BiomeTypeDatabase base = getBase();
         synchronized (base.minecraftToBiome) {
-            return base.getBiomeType(base.minecraftToBiome.get(key));
+            return base.getBiomeType(base.minecraftToBiome.get(key)).getUUID();
         }
     }
 
     public BiomeUUID getBiomeUUID(String name) {
         synchronized (this.nameToBiome) {
-            return this.getBiomeType(this.nameToBiome.get(name));
+            return this.getBiomeType(this.nameToBiome.get(name)).getUUID();
         }
     }
 
@@ -72,10 +71,10 @@ public class BiomeTypeDatabase {
 
     public static class BiomeSpawningDatabase {
 
-        private final Map<BiomeUUID, BiomeSpawning> biomes = new HashMap<>();
+        private final Map<BiomeUUID, BiomeSpawner> biomes = new HashMap<>();
 
         @Nullable
-        public BiomeSpawning get(@Nullable BiomeUUID uuid) {
+        public BiomeSpawner get(@Nullable BiomeUUID uuid) {
             if (uuid == null)
                 return null;
             synchronized (this.biomes) {

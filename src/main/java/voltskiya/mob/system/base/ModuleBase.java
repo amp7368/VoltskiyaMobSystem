@@ -1,9 +1,10 @@
 package voltskiya.mob.system.base;
 
-import apple.lib.pmc.PluginModule;
+import com.voltskiya.lib.AbstractModule;
 import voltskiya.mob.system.base.biome.BiomeTypeDatabase;
+import voltskiya.mob.system.base.world.WorldDatabase;
 
-public class ModuleBase extends PluginModule {
+public class ModuleBase extends AbstractModule {
 
     private static ModuleBase instance;
 
@@ -17,6 +18,8 @@ public class ModuleBase extends PluginModule {
 
     @Override
     public void enable() {
+        VoltskiyaMobDatabase.load();
+        WorldDatabase.load();
         BiomeTypeDatabase.load();
     }
 

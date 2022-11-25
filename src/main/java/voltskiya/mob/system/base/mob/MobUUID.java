@@ -2,15 +2,19 @@ package voltskiya.mob.system.base.mob;
 
 public class MobUUID {
 
-    public short uuid;
+    public short typeUUID;
+
+    public MobUUID(short typeUUID) {
+        this.typeUUID = typeUUID;
+    }
 
     @Override
     public int hashCode() {
-        return uuid;
+        return typeUUID;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof MobUUID other && other.uuid == this.uuid;
+        return obj instanceof MobUUID other && other.typeUUID == this.typeUUID;
     }
 }
