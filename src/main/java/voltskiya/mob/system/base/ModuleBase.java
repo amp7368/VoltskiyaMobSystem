@@ -1,7 +1,7 @@
 package voltskiya.mob.system.base;
 
 import com.voltskiya.lib.AbstractModule;
-import voltskiya.mob.system.base.biome.BiomeTypeDatabase;
+import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.storage.world.WorldAdapter;
 
 public class ModuleBase extends AbstractModule {
@@ -24,7 +24,7 @@ public class ModuleBase extends AbstractModule {
     @Override
     public void enable() {
         WorldAdapter.load();
-        BiomeTypeDatabase.load();
+        BiomeDatabases.load();
     }
 
     @Override

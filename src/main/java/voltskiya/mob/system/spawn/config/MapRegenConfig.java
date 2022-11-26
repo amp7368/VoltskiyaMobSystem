@@ -1,7 +1,10 @@
 package voltskiya.mob.system.spawn.config;
 
+import java.util.Random;
 import java.util.UUID;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.base.storage.world.WorldAdapter;
 import voltskiya.mob.system.base.storage.world.WorldUUID;
 
@@ -17,6 +20,7 @@ public class MapRegenConfig {
     public int z2 = 0;
     public double density = 20.0;
     private transient WorldUUID worldUUID;
+    private transient final Random random = new Random();
 
     public MapRegenConfig(World world) {
         this.world = world.getUID();
@@ -50,6 +54,11 @@ public class MapRegenConfig {
         return zMax() - zMin();
     }
 
+    private int yMin() {
+        World world = getWorld().getBukkit();
+        return world == null ? 0 : world.getMinHeight();
+    }
+
     public int yRange() {
         World world = getWorld().getBukkit();
         if (world == null)
@@ -71,5 +80,24 @@ public class MapRegenConfig {
 
     private void save() {
         RegenConfig.save();
+    }
+
+    @Nullable
+    public Location randomLocation() {
+        World bukkit = getWorld().getBukkit();
+        if (bukkit == null) return null;
+        int xRange = xRange();
+        int yRange = yRange();
+        int zRange = zRange();
+        if (xRange == 0 || yRange == 0 || zRange == 0) return null;
+        int x;
+        int y;
+        int z;
+        synchronized (random) {
+            x = random.nextInt(xRange) + xMin();
+            y = random.nextInt(yRange) + yMin();
+            z = random.nextInt(zRange) + zMin();
+        }
+        return new Location(bukkit, x, y, z);
     }
 }

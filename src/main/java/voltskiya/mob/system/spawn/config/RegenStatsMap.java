@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import voltskiya.mob.system.base.storage.mob.MobStorage;
 import voltskiya.mob.system.base.storage.world.WorldStorage;
-import voltskiya.mob.system.base.storage.world.WorldUUID;
 
 public class RegenStatsMap {
 
@@ -32,9 +31,9 @@ public class RegenStatsMap {
         this.desiredDensity = 1000 / Math.pow(config.density, 3);
     }
 
-    public static WorldUUID chooseMap() {
+    public static MapRegenConfig chooseMap() {
         maps.sort(Comparator.comparingDouble(RegenStatsMap::chance));
-        return maps.get(0).config.getWorld();
+        return maps.get(0).config;
     }
 
     private double chance() {

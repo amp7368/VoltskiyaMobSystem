@@ -3,20 +3,29 @@ package voltskiya.mob.system.base.spawner;
 import apple.utilities.json.gson.GsonBuilderDynamic;
 import java.util.ArrayList;
 import java.util.List;
+import voltskiya.mob.system.base.mob.MobUUID;
+import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.spawner.modifier.PreSpawningModifierFactory;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifierFactory;
 import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 import voltskiya.mob.system.base.spawner.rule.old.BlockConditionsTypes;
 import voltskiya.mob.system.base.spawner.rule.temporal.SpawningTemporalRule;
-import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.player.world.mob.SpawnerSummonResult;
 
-public class MobTypeSpawner {
+public class MobSpawnerFragment {
 
+    private MobUUID mob;
     private final List<SpawningRule> rules = new ArrayList<>();
     private final List<SpawningTemporalRule> temporalRules = new ArrayList<>();
     private final List<SpawningModifierFactory> modifiers = new ArrayList<>();
     private final List<PreSpawningModifierFactory> preModifiers = new ArrayList<>();
+
+    public MobSpawnerFragment(MobUUID mob) {
+        this.mob = mob;
+    }
+
+    public MobSpawnerFragment() {
+    }
 
     public static void gson(GsonBuilderDynamic gson) {
         BlockConditionsTypes.register(gson);
@@ -64,5 +73,9 @@ public class MobTypeSpawner {
         for (SpawningModifierFactory modifier : this.modifiers) {
             result.addModifier(modifier.createModifier(context));
         }
+    }
+
+    public MobUUID getUUID() {
+        return this.mob;
     }
 }

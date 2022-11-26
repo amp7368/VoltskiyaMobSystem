@@ -5,20 +5,20 @@ import apple.utilities.json.gson.GsonBuilderDynamic;
 import java.util.function.Consumer;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import voltskiya.mob.system.base.spawner.MobTypeSpawner;
+import voltskiya.mob.system.base.spawner.MobSpawnerFragment;
 
 public class MobType {
 
     private MobUUID mobUUID;
     private String mobName;
-    private MobTypeSpawner globalSpawning;
+    private MobSpawnerFragment globalSpawning;
     private EntitySerializable entity;
 
     public static void gson(GsonBuilderDynamic gson) {
-        MobTypeSpawner.gson(gson);
+        MobSpawnerFragment.gson(gson);
     }
 
-    public MobTypeSpawner getSpawner() {
+    public MobSpawnerFragment getSpawner() {
         return globalSpawning;
     }
 

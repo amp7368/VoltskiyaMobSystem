@@ -1,7 +1,9 @@
 package voltskiya.mob.system.spawn.task;
 
+import java.util.concurrent.ExecutionException;
 import org.bukkit.Bukkit;
 import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.spawn.config.RegenConfig;
 
 public class WorldRegenDaemon {
 
@@ -27,7 +29,11 @@ public class WorldRegenDaemon {
                 if (!isRunning)
                     return;
             }
-            this.worldRegen.run();
+            try {
+                this.worldRegen.run().get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
             synchronized (this) {
                 isRunning = shouldRun;
                 if (!isRunning)
