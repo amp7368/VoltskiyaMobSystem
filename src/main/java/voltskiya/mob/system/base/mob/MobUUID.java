@@ -2,9 +2,9 @@ package voltskiya.mob.system.base.mob;
 
 public class MobUUID {
 
-    public short typeUUID;
+    public int typeUUID;
 
-    public MobUUID(short typeUUID) {
+    public MobUUID(int typeUUID) {
         this.typeUUID = typeUUID;
     }
 

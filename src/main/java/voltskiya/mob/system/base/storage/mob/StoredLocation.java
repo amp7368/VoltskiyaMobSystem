@@ -2,11 +2,10 @@ package voltskiya.mob.system.base.storage.mob;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.base.storage.world.WorldDatabase;
+import voltskiya.mob.system.base.storage.world.WorldAdapter;
 
 @Embeddable
 public class StoredLocation {
@@ -30,7 +29,7 @@ public class StoredLocation {
     private float pitch;
 
     public StoredLocation(Location location) {
-        this.world = WorldDatabase.get().getWorld(location.getWorld());
+        this.world = WorldAdapter.get().getWorld(location.getWorld()).worldId;
 
         double x = location.getX();
         this.x = (int) x;
@@ -72,7 +71,7 @@ public class StoredLocation {
     @Nullable
     private World bukkitWorld() {
         if (this.bukkitWorld == null)
-            this.bukkitWorld = Bukkit.getWorld(WorldDatabase.get().getWorld(this.world));
+            this.bukkitWorld = WorldAdapter.get().getWorld(this.world).getBukkit();
         return this.bukkitWorld;
     }
 }

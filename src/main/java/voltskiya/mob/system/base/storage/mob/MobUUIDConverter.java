@@ -5,15 +5,15 @@ import javax.persistence.Converter;
 import voltskiya.mob.system.base.mob.MobUUID;
 
 @Converter
-public class MobUUIDConverter implements AttributeConverter<MobUUID, Short> {
+public class MobUUIDConverter implements AttributeConverter<MobUUID, Integer> {
 
     @Override
-    public Short convertToDatabaseColumn(MobUUID attribute) {
+    public Integer convertToDatabaseColumn(MobUUID attribute) {
         return attribute.typeUUID;
     }
 
     @Override
-    public MobUUID convertToEntityAttribute(Short dbData) {
+    public MobUUID convertToEntityAttribute(Integer dbData) {
         return new MobUUID(dbData);
     }
 }

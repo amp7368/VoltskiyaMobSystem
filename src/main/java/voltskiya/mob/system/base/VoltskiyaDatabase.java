@@ -1,7 +1,7 @@
 package voltskiya.mob.system.base;
 
-import com.voltskiya.lib.pmc.FileIOServiceNow;
 import apple.utilities.database.ajd.AppleAJD;
+import com.voltskiya.lib.pmc.FileIOServiceNow;
 import io.ebean.DatabaseFactory;
 import io.ebean.config.DatabaseConfig;
 import io.ebean.datasource.DataSourceConfig;
@@ -10,11 +10,12 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.VoltskiyaPlugin;
 import voltskiya.mob.system.base.storage.mob.StoredMob;
+import voltskiya.mob.system.base.storage.world.StoredWorld;
 
-public class VoltskiyaMobDatabase {
+public class VoltskiyaDatabase {
 
     public static void load() {
-        VoltskiyaMobDatabaseConfig loadedConfig = loadConfig();
+        VoltskiyaDatabaseConfig loadedConfig = loadConfig();
         DataSourceConfig dataSourceConfig = configureDataSource(loadedConfig);
         DatabaseConfig dbConfig = configureDatabase(dataSourceConfig);
         DatabaseFactory.createWithContextClassLoader(dbConfig,
@@ -29,12 +30,12 @@ public class VoltskiyaMobDatabase {
         dbConfig.setAutoPersistUpdates(true);
         dbConfig.setDdlGenerate(true);
         dbConfig.setDdlRun(true);
-        dbConfig.addAll(List.of(StoredMob.class));
+        dbConfig.addAll(List.of(StoredMob.class, StoredWorld.class));
         return dbConfig;
     }
 
     @NotNull
-    private static DataSourceConfig configureDataSource(VoltskiyaMobDatabaseConfig loadedConfig) {
+    private static DataSourceConfig configureDataSource(VoltskiyaDatabaseConfig loadedConfig) {
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setUsername(loadedConfig.getUsername());
         dataSourceConfig.setPassword(loadedConfig.getPassword());
@@ -42,9 +43,9 @@ public class VoltskiyaMobDatabase {
         return dataSourceConfig;
     }
 
-    private static VoltskiyaMobDatabaseConfig loadConfig() {
+    private static VoltskiyaDatabaseConfig loadConfig() {
         File file = ModuleBase.get().getFile("DatabaseConfig.json");
-        return AppleAJD.createInst(VoltskiyaMobDatabaseConfig.class, file,
+        return AppleAJD.createInst(VoltskiyaDatabaseConfig.class, file,
             FileIOServiceNow.taskCreator()).loadOrMake();
     }
 }

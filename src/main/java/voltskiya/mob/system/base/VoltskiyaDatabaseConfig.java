@@ -1,6 +1,6 @@
 package voltskiya.mob.system.base;
 
-public class VoltskiyaMobDatabaseConfig {
+public class VoltskiyaDatabaseConfig {
 
     public String username = "${username}";
     public String password = "${password}";

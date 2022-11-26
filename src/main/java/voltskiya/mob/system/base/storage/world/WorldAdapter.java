@@ -2,6 +2,7 @@ package voltskiya.mob.system.base.storage.world;
 
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDInst;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
@@ -11,22 +12,22 @@ import java.util.UUID;
 import org.bukkit.World;
 import voltskiya.mob.system.spawn.ModuleSpawning;
 
-public class WorldDatabase {
+public class WorldAdapter {
 
-    private static AppleAJDInst<WorldDatabase> manager;
-    private transient Map<UUID, Short> uuidToId = HashBiMap.create();
+    private static AppleAJDInst<WorldAdapter> manager;
+    private final transient BiMap<UUID, WorldUUID> uuidToId = HashBiMap.create();
     private transient short nextId;
-    private Map<Short, UUID> worlds = new HashMap<>();
+    private final Map<Short, WorldUUID> worlds = new HashMap<>();
 
     public static void load() {
         File file = ModuleSpawning.get().getFile("Worlds.json");
-        manager = AppleAJD.createInst(WorldDatabase.class, file, FileIOServiceNow.taskCreator());
-        WorldDatabase db = manager.loadOrMake();
+        manager = AppleAJD.createInst(WorldAdapter.class, file, FileIOServiceNow.taskCreator());
+        WorldAdapter db = manager.loadOrMake();
         int nextId = db.worlds.keySet().stream().max(Short::compareTo).orElse((short) -1) + 1;
         db.nextId = (short) nextId;
     }
 
-    public static WorldDatabase get() {
+    public static WorldAdapter get() {
         return manager.getInstance();
     }
 
@@ -34,23 +35,23 @@ public class WorldDatabase {
         manager.save();
     }
 
-    public synchronized short getWorld(UUID uuid) {
-        Short id = uuidToId.get(uuid);
+    public synchronized WorldUUID getWorld(UUID uuid) {
+        WorldUUID id = uuidToId.get(uuid);
         if (id != null)
             return id;
-        id = nextId++;
+        id = new WorldUUID(nextId++, uuid);
         uuidToId.put(uuid, id);
-        worlds.put(id, uuid);
+        worlds.put(id.worldId, id);
         save();
         return id;
     }
 
 
-    public synchronized UUID getWorld(short id) {
+    public synchronized WorldUUID getWorld(short id) {
         return worlds.get(id);
     }
 
-    public short getWorld(World world) {
+    public WorldUUID getWorld(World world) {
         return this.getWorld(world.getUID());
     }
 }
