@@ -3,7 +3,6 @@ package voltskiya.mob.system.base.spawner;
 import apple.utilities.json.gson.GsonBuilderDynamic;
 import java.util.ArrayList;
 import java.util.List;
-import voltskiya.mob.system.base.mob.MobUUID;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.spawner.modifier.PreSpawningModifierFactory;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifierFactory;
@@ -12,23 +11,22 @@ import voltskiya.mob.system.base.spawner.rule.old.BlockConditionsTypes;
 import voltskiya.mob.system.base.spawner.rule.temporal.SpawningTemporalRule;
 import voltskiya.mob.system.player.world.mob.SpawnerSummonResult;
 
-public class MobSpawnerFragment {
+public class Spawner {
 
-    private MobUUID mob;
     private final List<SpawningRule> rules = new ArrayList<>();
     private final List<SpawningTemporalRule> temporalRules = new ArrayList<>();
     private final List<SpawningModifierFactory> modifiers = new ArrayList<>();
     private final List<PreSpawningModifierFactory> preModifiers = new ArrayList<>();
 
-    public MobSpawnerFragment(MobUUID mob) {
-        this.mob = mob;
-    }
-
-    public MobSpawnerFragment() {
+    public Spawner() {
     }
 
     public static void gson(GsonBuilderDynamic gson) {
         BlockConditionsTypes.register(gson);
+    }
+
+    public static Spawner biomeDefault() {
+        return new Spawner();
     }
 
     public void addRule(SpawningRule rule) {
@@ -75,7 +73,7 @@ public class MobSpawnerFragment {
         }
     }
 
-    public MobUUID getUUID() {
-        return this.mob;
+    public double getSpawnRateModifier() {
+        return 1; // todo Idk where to add this
     }
 }

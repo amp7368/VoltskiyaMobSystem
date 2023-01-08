@@ -1,18 +1,20 @@
 package voltskiya.mob.system.spawn.task;
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 import voltskiya.mob.system.VoltskiyaPlugin;
-import voltskiya.mob.system.spawn.config.RegenConfig;
 
 public class WorldRegenDaemon {
 
     private static WorldRegenDaemon instance;
-
-    private boolean isRunning = false;
-    private boolean shouldRun = false;
-    private final WorldRegen worldRegen = new WorldRegen();
-
+    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, run -> {
+        Thread thread = new Thread(run);
+        thread.setPriority(Thread.MIN_PRIORITY);
+        return thread;
+    });
+    private BukkitTask runningScheduler;
 
     public WorldRegenDaemon() {
         instance = this;
@@ -22,39 +24,30 @@ public class WorldRegenDaemon {
         return instance;
     }
 
-    public void run() {
-        while (true) {
-            synchronized (this) {
-                isRunning = shouldRun;
-                if (!isRunning)
-                    return;
-            }
-            try {
-                this.worldRegen.run().get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-            synchronized (this) {
-                isRunning = shouldRun;
-                if (!isRunning)
-                    return;
-            }
-        }
+    private void scheduleTask() {
+        service.submit(new WorldRegenTask()::run);
     }
 
 
     public void start() {
         synchronized (this) {
-            this.shouldRun = true;
-            if (!isRunning) {
-                Bukkit.getScheduler().runTaskAsynchronously(VoltskiyaPlugin.get(), this::run);
-            }
+            scheduleThisScheduler();
         }
     }
 
     public void stop() {
         synchronized (this) {
-            this.shouldRun = false;
+            if (this.runningScheduler != null) {
+                this.runningScheduler.cancel();
+                this.runningScheduler = null;
+            }
+        }
+    }
+
+    private void scheduleThisScheduler() {
+        synchronized (this) {
+            if (this.runningScheduler != null) return;
+            runningScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(VoltskiyaPlugin.get(), this::scheduleTask, 0, 10);
         }
     }
 }

@@ -33,7 +33,7 @@ project.group groupValue
 project.version versionValue
 
 configurations {
-    all {
+    configureEach {
         resolutionStrategy.cacheDynamicVersionsFor 1, 'seconds'
         resolutionStrategy.cacheChangingModulesFor 1, 'seconds'
     }

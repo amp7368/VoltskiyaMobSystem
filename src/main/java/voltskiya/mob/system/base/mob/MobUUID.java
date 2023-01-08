@@ -1,23 +1,21 @@
 package voltskiya.mob.system.base.mob;
 
-public class MobUUID {
+import voltskiya.mob.system.base.util.UUIDWrapper;
 
-    public int id;
+public class MobUUID extends UUIDWrapper<Integer, MobType> {
+
 
     public MobUUID(int id) {
-        this.id = id;
-    }
-
-    public MobUUID() {
+        super(id);
     }
 
     @Override
-    public int hashCode() {
-        return id;
+    public boolean isInstanceOf(Object obj) {
+        return obj instanceof MobUUID;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof MobUUID other && other.id == this.id;
+    public MobType mapped() {
+        return MobTypeDatabase.getMobType(this);
     }
 }

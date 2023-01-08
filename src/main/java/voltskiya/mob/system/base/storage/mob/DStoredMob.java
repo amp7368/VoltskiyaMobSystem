@@ -1,10 +1,9 @@
 package voltskiya.mob.system.base.storage.mob;
 
+import io.ebean.annotation.Identity;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -13,11 +12,10 @@ import voltskiya.mob.system.base.mob.MobTypeDatabase;
 import voltskiya.mob.system.base.mob.MobUUID;
 
 @Entity
-public class StoredMob {
+public class DStoredMob {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Identity
     private long id;
 
     @Convert(converter = MobUUIDConverter.class)
@@ -32,18 +30,18 @@ public class StoredMob {
     private long spawnDelay;
 
 
-    public StoredMob(MobUUID mobType, @NotNull Location location) {
+    public DStoredMob(MobUUID mobType, @NotNull Location location) {
         this.mobType = mobType;
         this.location = new StoredLocation(location);
         this.spawnDelay = 0;
     }
 
-    public StoredMob() {
+    public DStoredMob() {
     }
 
     public MobType getMobType() {
         if (this.mobTypeMemory == null)
-            this.mobTypeMemory = MobTypeDatabase.get().getMobType(this.mobType);
+            this.mobTypeMemory = MobTypeDatabase.getMobType(this.mobType);
         return mobTypeMemory;
     }
 

@@ -11,28 +11,25 @@ import java.util.Map;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.ModuleBase;
-import voltskiya.mob.system.base.biome.database.BiomeSpawningDatabase;
 import voltskiya.mob.system.base.biome.database.BiomeTemperatureDatabase;
 import voltskiya.mob.system.base.biome.database.BiomeTypeDatabase;
 
 public class BiomeDatabases {
 
-    private static AppleAJDInst<BiomeSpawningDatabase> spawningManager;
     private static AppleAJDInst<BiomeTemperatureDatabase> temperatureManager;
     private static AppleAJDInst<BiomeDatabases> idManager;
     private static AppleAJDInst<BiomeTypeDatabase> biomeTypeManager;
     private final Map<NamespacedKey, BiomeUUID> minecraftToBiome = new HashMap<>();
 
     public static void load() {
-        File spawningFile = ModuleBase.get().getFile("BiomeSpawnings.json");
         File tempsFile = ModuleBase.get().getFile("BiomeTemperatures.json");
-        File baseFile = ModuleBase.get().getFile("BiomeTypes.json");
-        spawningManager = AppleAJD.createInst(BiomeSpawningDatabase.class, spawningFile, FileIOServiceNow.taskCreator(), gson());
+        File typesFile = ModuleBase.get().getFile("BiomeTypes.json");
+        File idsFile = ModuleBase.get().getFile("BiomeIds.json");
         temperatureManager = AppleAJD.createInst(BiomeTemperatureDatabase.class, tempsFile, FileIOServiceNow.taskCreator(), gson());
-        biomeTypeManager = AppleAJD.createInst(BiomeTypeDatabase.class, baseFile, FileIOServiceNow.taskCreator(), gson());
-        idManager = AppleAJD.createInst(BiomeDatabases.class, baseFile, FileIOServiceNow.taskCreator(), gson());
-        spawningManager.loadOrMake();
+        biomeTypeManager = AppleAJD.createInst(BiomeTypeDatabase.class, typesFile, FileIOServiceNow.taskCreator(), gson());
+        idManager = AppleAJD.createInst(BiomeDatabases.class, idsFile, FileIOServiceNow.taskCreator(), gson());
         temperatureManager.loadOrMake();
+        biomeTypeManager.loadOrMake();
         idManager.loadOrMake();
     }
 
@@ -43,10 +40,6 @@ public class BiomeDatabases {
 
     public static BiomeDatabases getBase() {
         return idManager.getInstance();
-    }
-
-    public static BiomeSpawningDatabase getSpawning() {
-        return spawningManager.getInstance();
     }
 
     public static BiomeTypeDatabase getBiomeType() {

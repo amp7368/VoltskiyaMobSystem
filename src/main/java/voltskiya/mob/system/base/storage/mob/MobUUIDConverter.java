@@ -9,7 +9,7 @@ public class MobUUIDConverter implements AttributeConverter<MobUUID, Integer> {
 
     @Override
     public Integer convertToDatabaseColumn(MobUUID attribute) {
-        return attribute.id;
+        return attribute.getId();
     }
 
     @Override

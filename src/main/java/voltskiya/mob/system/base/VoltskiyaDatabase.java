@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.VoltskiyaPlugin;
-import voltskiya.mob.system.base.storage.mob.StoredMob;
+import voltskiya.mob.system.base.storage.mob.DStoredMob;
 import voltskiya.mob.system.base.storage.world.StoredWorld;
 
 public class VoltskiyaDatabase {
@@ -30,7 +30,7 @@ public class VoltskiyaDatabase {
         dbConfig.setAutoPersistUpdates(true);
         dbConfig.setDdlGenerate(true);
         dbConfig.setDdlRun(true);
-        dbConfig.addAll(List.of(StoredMob.class, StoredWorld.class));
+        dbConfig.addAll(List.of(DStoredMob.class, StoredWorld.class));
         return dbConfig;
     }
 
