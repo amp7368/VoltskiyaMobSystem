@@ -56,5 +56,9 @@ public class MobType {
         BuiltSpawner spawner = BuiltSpawner.fromBuilt(List.of(biomeSpawner, this.spawner));
         return new MobTypeSpawner(this, spawner);
     }
+
+    public MobUUID getId() {
+        return this.uuid;
+    }
 }
 

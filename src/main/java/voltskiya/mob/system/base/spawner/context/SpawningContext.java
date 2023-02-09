@@ -2,6 +2,7 @@ package voltskiya.mob.system.base.spawner.context;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeUUID;
 import voltskiya.mob.system.base.spawner.rule.temporal.TimeOfDay;
@@ -11,7 +12,11 @@ public record SpawningContext(Location location, BiomeUUID biomeUUID, Block feet
 
 
     public static SpawningContext create(DStoredMob storedMob) {
-        Location location = storedMob.getLocation();
+        return create(storedMob.getLocation());
+    }
+
+    @NotNull
+    public static SpawningContext create(Location location) {
         Block feetBlock = location.getBlock();
         Block belowFeetBlock = location.clone().subtract(0, 1, 0).getBlock();
         BiomeUUID biomeUUID = BiomeDatabases.getBiome(feetBlock.getBiome().getKey());

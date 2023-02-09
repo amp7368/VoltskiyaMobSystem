@@ -14,9 +14,9 @@ public class RegenStatsMap {
     private final MapRegenConfig config;
 
     // todo update on insert & delete
-    private int mobCount;
+    private final int mobCount;
 
-    private double density;
+    private final double density;
 
     public static void load() {
         maps = RegenConfig.get().maps.values().stream().map(RegenStatsMap::new).toList();
@@ -27,7 +27,7 @@ public class RegenStatsMap {
         this.mobCount = MobStorage.countMobs(config.getWorld().worldId);
         this.hitRatio = WorldStorage.hitRatio(config.getWorld());
         this.blockCount = (long) config.xRange() * config.yRange() * config.zRange();
-        this.density = mobCount * 1000 / (double) blockCount;
+        this.density = mobCount * 1000 / (double) blockCount; // todo update density when mobs are inserted
         this.desiredDensity = 1000 / Math.pow(config.density, 3);
     }
 

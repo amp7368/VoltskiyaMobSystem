@@ -8,7 +8,6 @@ import voltskiya.mob.system.VoltskiyaPlugin;
 import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeType;
 import voltskiya.mob.system.base.mob.MobType;
-import voltskiya.mob.system.base.mob.MobUUID;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.storage.mob.DStoredMob;
@@ -30,7 +29,6 @@ public class MobWorldSpawning {
     }
 
     private static ShouldSpawningResult trySpawn(DStoredMob storedMob) {
-        MobUUID mobUUID = storedMob.getMobUUID();
         MobType mobType = storedMob.getMobType();
 
         SpawningContext context = SpawningContext.create(storedMob);

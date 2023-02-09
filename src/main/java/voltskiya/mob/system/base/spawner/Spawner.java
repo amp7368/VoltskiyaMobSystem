@@ -6,8 +6,8 @@ import java.util.List;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.spawner.modifier.PreSpawningModifierFactory;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifierFactory;
+import voltskiya.mob.system.base.spawner.rule.generic.GsonMapSpawningRule;
 import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
-import voltskiya.mob.system.base.spawner.rule.old.BlockConditionsTypes;
 import voltskiya.mob.system.base.spawner.rule.temporal.SpawningTemporalRule;
 import voltskiya.mob.system.player.world.mob.SpawnerSummonResult;
 
@@ -22,7 +22,7 @@ public class Spawner {
     }
 
     public static void gson(GsonBuilderDynamic gson) {
-        BlockConditionsTypes.register(gson);
+        GsonMapSpawningRule.register(gson);
     }
 
     public static Spawner biomeDefault() {

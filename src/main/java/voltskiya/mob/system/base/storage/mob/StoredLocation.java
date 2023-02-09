@@ -14,18 +14,20 @@ public class StoredLocation {
     @Column(precision = 3)
     private short world;
     @Column(precision = 28)
-    private double x;
+    private long x;
     @Column(precision = 28)
-    private double y;
+    private long y;
     @Column(precision = 28)
-    private double z;
+    private long z;
     @Column(precision = 16, scale = 16)
     private double xDecimal;
     @Column(precision = 16, scale = 16)
     private double yDecimal;
     @Column(precision = 16, scale = 16)
     private double zDecimal;
+    @Column
     private float yaw;
+    @Column
     private float pitch;
 
     public StoredLocation(Location location) {
@@ -43,9 +45,6 @@ public class StoredLocation {
 
         this.yaw = location.getYaw();
         this.pitch = location.getPitch();
-    }
-
-    public StoredLocation() {
     }
 
     @Nullable

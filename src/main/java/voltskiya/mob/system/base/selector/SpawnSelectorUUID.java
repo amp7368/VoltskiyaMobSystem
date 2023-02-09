@@ -1,11 +1,12 @@
 package voltskiya.mob.system.base.selector;
 
+import java.util.UUID;
 import voltskiya.mob.system.base.util.UUIDWrapper;
 
-public class SpawnSelectorUUID extends UUIDWrapper<Integer, SpawnSelector> {
+public class SpawnSelectorUUID extends UUIDWrapper<UUID, SpawnSelector> {
 
 
-    public SpawnSelectorUUID(int id) {
+    public SpawnSelectorUUID(UUID id) {
         super(id);
     }
 

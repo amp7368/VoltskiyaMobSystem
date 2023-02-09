@@ -22,6 +22,10 @@ public class ShouldSpawningResult {
     }
 
     public boolean shouldSpawn() {
-        return shouldRemove && spawnDelay == 0;
+        return canFutureSpawn() && spawnDelay == 0;
+    }
+
+    public boolean canFutureSpawn() {
+        return !shouldRemove;
     }
 }

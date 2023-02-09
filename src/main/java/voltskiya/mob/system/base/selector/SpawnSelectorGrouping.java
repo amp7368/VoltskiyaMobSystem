@@ -2,6 +2,7 @@ package voltskiya.mob.system.base.selector;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 import voltskiya.mob.system.base.util.UUIDWrapper;
 
@@ -9,7 +10,7 @@ public class SpawnSelectorGrouping {
 
     private final Set<SpawnSelectorUUID> extendsSpawnSelector = new HashSet<>();
     private transient BuiltSpawner compiled = null;
-    private String formattedName;
+    private transient String formattedName;
 
     public void setName(String name, UUIDWrapper<?, ?> uuid) {
         this.formattedName = String.format("%s [%s]", name, uuid.toString());
@@ -23,6 +24,7 @@ public class SpawnSelectorGrouping {
         this.init(new InitializingCallerStack());
     }
 
+    @NotNull
     public BuiltSpawner compiled() {
         Set<BuiltSpawner> allSelectors = new HashSet<>();
         for (SpawnSelectorUUID uuid : this.extendsSpawnSelector) {

@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Biome;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.base.biome.database.BiomeTemperatureDatabase;
@@ -25,12 +26,19 @@ public class BiomeDatabases {
         File tempsFile = ModuleBase.get().getFile("BiomeTemperatures.json");
         File typesFile = ModuleBase.get().getFile("BiomeTypes.json");
         File idsFile = ModuleBase.get().getFile("BiomeIds.json");
+        idManager = AppleAJD.createInst(BiomeDatabases.class, idsFile, FileIOServiceNow.taskCreator(), gson());
         temperatureManager = AppleAJD.createInst(BiomeTemperatureDatabase.class, tempsFile, FileIOServiceNow.taskCreator(), gson());
         biomeTypeManager = AppleAJD.createInst(BiomeTypeDatabase.class, typesFile, FileIOServiceNow.taskCreator(), gson());
-        idManager = AppleAJD.createInst(BiomeDatabases.class, idsFile, FileIOServiceNow.taskCreator(), gson());
+        idManager.loadOrMake();
         temperatureManager.loadOrMake();
         biomeTypeManager.loadOrMake();
-        idManager.loadOrMake();
+        biomeTypeManager.saveNow();
+        // make sure all minecraft biomes are saved
+        for (Biome biome : Biome.values()) {
+            BiomeDatabases.getBiome(biome.getKey());
+        }
+        idManager.saveNow();
+        biomeTypeManager.saveNow();
     }
 
     @NotNull

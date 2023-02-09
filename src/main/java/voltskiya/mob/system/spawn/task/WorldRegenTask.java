@@ -11,6 +11,10 @@ import voltskiya.mob.system.base.biome.BiomeType;
 import voltskiya.mob.system.base.mob.MobTypeSpawner;
 import voltskiya.mob.system.base.mob.MobUUID;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
+import voltskiya.mob.system.base.spawner.context.SpawningContext;
+import voltskiya.mob.system.base.storage.mob.DStoredMob;
+import voltskiya.mob.system.base.storage.mob.MobStorage;
+import voltskiya.mob.system.player.world.mob.ShouldSpawningResult;
 import voltskiya.mob.system.spawn.config.MapRegenConfig;
 import voltskiya.mob.system.spawn.config.RegenStatsMap;
 
@@ -25,7 +29,13 @@ public class WorldRegenTask implements Runnable {
     @Override
     public void run() {
         MobTypeSpawner mobToTry = chooseMobToTry();
-        // todo try to spawn the mob
+        SpawningContext spawnContext = SpawningContext.create(locationToTry);
+        ShouldSpawningResult shouldSpawn = mobToTry.spawner().shouldSpawn(spawnContext);
+        if (!shouldSpawn.canFutureSpawn()) return;
+
+        DStoredMob spawnedMob = new DStoredMob(mobToTry.mob().getId(), locationToTry);
+        spawnedMob.setSpawnDelay(shouldSpawn.getSpawnDelay());
+        MobStorage.insertMobs(List.of(spawnedMob));
     }
 
     public MobTypeSpawner chooseMobToTry() {
@@ -44,8 +54,7 @@ public class WorldRegenTask implements Runnable {
             MobTypeSpawner mobSpawner = mob.mapped().getSpawner(biomeSpawner);
             spawners.add(mobSpawner);
         }
-        MobTypeSpawner choice = this.random.choose(spawners);
-        return choice;
+        return this.random.choose(spawners);
     }
 
     private void calculateBiomeInfo() {

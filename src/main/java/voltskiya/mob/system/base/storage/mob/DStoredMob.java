@@ -3,6 +3,7 @@ package voltskiya.mob.system.base.storage.mob;
 import io.ebean.annotation.Identity;
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import org.bukkit.Location;
@@ -24,6 +25,7 @@ public class DStoredMob {
     private transient MobType mobTypeMemory;
 
     @Column(nullable = false)
+    @Embedded(prefix = "location_")
     private StoredLocation location;
 
     @Column(nullable = false)

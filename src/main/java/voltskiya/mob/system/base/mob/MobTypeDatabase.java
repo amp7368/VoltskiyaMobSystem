@@ -32,7 +32,7 @@ public class MobTypeDatabase implements HasFilename {
     }
 
     public static void load() {
-        File file = ModuleSpawning.get().getFile("MobTypes.json");
+        File file = ModuleSpawning.get().getFile("MobTypes");
         AppleAJDTyped<MobTypeDatabase> manager = AppleAJD.createTyped(MobTypeDatabase.class, file, FileIOServiceNow.taskCreator());
         GsonBuilderDynamic gson = GsonSerializeMC.completeGsonDynamicMC();
         manager.setSerializingJson(gson.create());

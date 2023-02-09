@@ -13,14 +13,12 @@ import voltskiya.mob.system.spawn.ModuleSpawning;
 
 public class RegenConfig {
 
-    private static RegenConfig instance;
     private static AppleAJDInst<RegenConfig> manager;
     public int maxPlayersWhileRunning = 0;
 
     public Map<UUID, MapRegenConfig> maps = new HashMap<>();
 
     public RegenConfig() {
-        instance = this;
         for (World world : Bukkit.getWorlds()) {
             maps.put(world.getUID(), new MapRegenConfig(world));
         }
@@ -29,10 +27,11 @@ public class RegenConfig {
     public static void load() {
         File file = ModuleSpawning.get().getFile("WorldRegenConfig.json");
         manager = AppleAJD.createInst(RegenConfig.class, file, FileIOServiceNow.taskCreator());
+        manager.loadOrMake();
     }
 
     public static RegenConfig get() {
-        return instance;
+        return manager.getInstance();
     }
 
     public static void save() {

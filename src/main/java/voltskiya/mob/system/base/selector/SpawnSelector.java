@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.base.mob.MobUUID;
+import voltskiya.mob.system.base.selector.api.SpawnSelectorDatabaseQuery;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 import voltskiya.mob.system.base.spawner.Spawner;
 
@@ -23,9 +24,11 @@ public class SpawnSelector implements HasFilename {
     public SpawnSelector(SpawnSelectorUUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
+        new SpawnSelectorDatabaseQuery(this);
     }
 
     public SpawnSelector() {
+        new SpawnSelectorDatabaseQuery(this);
     }
 
     public static void initAll(Collection<SpawnSelector> selectors) {

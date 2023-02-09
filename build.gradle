@@ -53,6 +53,9 @@ dependencies {
     compileOnly 'voltskiya.utilities:VoltskiyaUtilities:2.0-SNAPSHOT'
     compileOnly 'voltskiya.mob:VoltskiyaMobManager:2.0-SNAPSHOT'
 
+    compileOnly 'voltskiya.web:VoltskiyaWebserver:1.0-SNAPSHOT'
+    compileOnly 'io.javalin:javalin:5.2.0'
+
     compileOnly 'org.spigotmc:spigot:1.19.2-R0.1-SNAPSHOT:remapped-mojang'
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
     compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'

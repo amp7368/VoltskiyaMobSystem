@@ -1,10 +1,9 @@
 package voltskiya.mob.system.base.storage.mob;
 
 import io.ebean.DB;
+import io.ebean.Query;
 import io.ebean.Transaction;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import voltskiya.mob.system.base.storage.mob.query.QDStoredMob;
 import voltskiya.mob.system.player.world.mob.MobWorldSpawning;
 
 public class MobStorage {
@@ -19,11 +18,18 @@ public class MobStorage {
         MobWorldSpawning.spawnMobs(result);
     }
 
-    @NotNull
-    private static QDStoredMob queryRegion(SpawnMobsRegion region, Transaction transaction) {
-        return new QDStoredMob().usingTransaction(transaction).where().and().location.world.eq(region.getWorldId()).location.x.between(
-                region.getLowerX(), region.getUpperX()).location.z.between(region.getLowerZ(), region.getUpperZ()).spawnDelay.eq(0)
-            .endAnd();
+    private static Query<DStoredMob> queryRegion(SpawnMobsRegion region, Transaction transaction) {
+        String queryString = """
+            where
+            location_world = :world and
+            spawnDelay = 0 and
+            location_x between :x1 and :x2 and
+            location_z between :z1 and :z2
+            """;
+        Query<DStoredMob> query = DB.createQuery(DStoredMob.class, queryString);
+        query.usingTransaction(transaction);
+        query.setParameters(region.getWorldId(), region.getLowerX(), region.getUpperX(), region.getLowerZ(), region.getUpperZ());
+        return query;
     }
 
     public static void insertMobs(List<DStoredMob> mobsToAddBack) {
@@ -31,7 +37,12 @@ public class MobStorage {
     }
 
     public static int countMobs(short worldId) {
-        return new QDStoredMob().where().location.world.eq(worldId).findCount();
+        String queryString = """
+            where location_world = :world
+            """;
+        Query<DStoredMob> query = DB.createQuery(DStoredMob.class, queryString);
+        query.setParameter("world", worldId);
+        return query.findCount();
     }
 
 }

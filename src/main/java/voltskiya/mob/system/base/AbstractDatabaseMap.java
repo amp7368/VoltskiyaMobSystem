@@ -1,5 +1,6 @@
 package voltskiya.mob.system.base;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.Map;
 import org.jetbrains.annotations.NotNull;

@@ -2,28 +2,32 @@ package voltskiya.mob.system.base.selector;
 
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDTyped;
+import apple.utilities.json.gson.GsonBuilderDynamic;
 import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import voltskiya.mob.system.base.ModuleBase;
+import voltskiya.mob.system.base.spawner.Spawner;
 
 public class SpawnSelectorDatabase {
 
     private static AppleAJDTyped<SpawnSelector> manager;
     private static final Map<SpawnSelectorUUID, SpawnSelector> selectors = new HashMap<>();
-    private static int nextId = 0;
+    public static final GsonBuilderDynamic SELECTOR_GSON = new GsonBuilderDynamic();
+
+    static {
+        Spawner.gson(SELECTOR_GSON);
+    }
 
     public static void load() {
         File file = ModuleBase.get().getFile("SpawnSelectors");
-        manager = AppleAJD.createTyped(SpawnSelector.class, file, FileIOServiceNow.taskCreator());
+
+        manager = AppleAJD.createTyped(SpawnSelector.class, file, FileIOServiceNow.taskCreator(), SELECTOR_GSON.create());
 
         for (SpawnSelector selector : manager.loadFolderNow()) {
             selectors.put(selector.getUUID(), selector);
-            int id = selector.getUUID().getId();
-            if (id >= nextId) {
-                nextId = id + 1;
-            }
         }
         SpawnSelector.initAll(selectors.values());
     }
@@ -37,7 +41,7 @@ public class SpawnSelectorDatabase {
 
     public static void add(String name) {
         synchronized (selectors) {
-            SpawnSelectorUUID uuid = new SpawnSelectorUUID(nextId++);
+            SpawnSelectorUUID uuid = new SpawnSelectorUUID(UUID.randomUUID());
             SpawnSelector selector = new SpawnSelector(uuid, name);
             selectors.put(uuid, selector);
             save(selector);
