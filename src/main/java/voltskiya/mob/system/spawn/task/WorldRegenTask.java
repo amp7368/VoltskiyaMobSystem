@@ -20,9 +20,10 @@ import voltskiya.mob.system.spawn.config.RegenStatsMap;
 
 public class WorldRegenTask implements Runnable {
 
-    private final ChanceWeightedChoice<MobTypeSpawner> random = new ChanceWeightedChoice<>(MobTypeSpawner::getSpawnRate);
     private Location locationToTry;
     private BiomeType biomeType;
+    private final ChanceWeightedChoice<MobTypeSpawner> random = new ChanceWeightedChoice<>(
+        spawner -> spawner.attributesTopLevel().getNormalizedSpawnRate(biomeType.getGlobalSpawnRate()));
     private BuiltSpawner biomeSpawner;
     private boolean isDone = false;
 
@@ -74,7 +75,9 @@ public class WorldRegenTask implements Runnable {
     }
 
     private void checkBiomeSpawnerFails() {
-        if (biomeSpawner.getSpawnRate() < this.random.random().nextDouble())
+        double globalSpawnRate = BiomeDatabases.getBiomeType().getGlobalSpawnRate();
+        double spawnRate = biomeSpawner.attributesTopLevel().getNormalizedSpawnRate(globalSpawnRate);
+        if (spawnRate > this.random.random().nextDouble())
             setDone();
     }
 

@@ -3,6 +3,9 @@ package voltskiya.mob.system.base.spawner;
 import apple.utilities.json.gson.GsonBuilderDynamic;
 import java.util.ArrayList;
 import java.util.List;
+import voltskiya.mob.system.base.spawner.attribute.GsonMapSpawningAttribute;
+import voltskiya.mob.system.base.spawner.attribute.base.SpawningAttributeModifier;
+import voltskiya.mob.system.base.spawner.attribute.base.SpawningAttributes;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.spawner.modifier.PreSpawningModifierFactory;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifierFactory;
@@ -18,11 +21,14 @@ public class Spawner {
     private final List<SpawningModifierFactory> modifiers = new ArrayList<>();
     private final List<PreSpawningModifierFactory> preModifiers = new ArrayList<>();
 
+    private final List<SpawningAttributeModifier> attributes = new ArrayList<>();
+
     public Spawner() {
     }
 
-    public static void gson(GsonBuilderDynamic gson) {
+    public static void registerGson(GsonBuilderDynamic gson) {
         GsonMapSpawningRule.register(gson);
+        GsonMapSpawningAttribute.register(gson);
     }
 
     public static Spawner biomeDefault() {
@@ -43,6 +49,10 @@ public class Spawner {
 
     public void addModifier(SpawningModifierFactory modifier) {
         modifiers.add(modifier);
+    }
+
+    public void addAttribute(SpawningAttributeModifier attribute) {
+        attributes.add(attribute);
     }
 
     public boolean isBreaksRule(SpawningContext context) {
@@ -73,7 +83,8 @@ public class Spawner {
         }
     }
 
-    public double getSpawnRateModifier() {
-        return 1; // todo Idk where to add this
+    public void attributes(SpawningAttributes original) {
+        original.join(SpawningAttributes.of(this.attributes));
     }
+
 }

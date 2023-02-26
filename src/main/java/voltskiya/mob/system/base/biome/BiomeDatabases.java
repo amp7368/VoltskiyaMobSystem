@@ -39,6 +39,7 @@ public class BiomeDatabases {
         }
         idManager.saveNow();
         biomeTypeManager.saveNow();
+        getBiomeType().loadGlobalStats();
     }
 
     @NotNull

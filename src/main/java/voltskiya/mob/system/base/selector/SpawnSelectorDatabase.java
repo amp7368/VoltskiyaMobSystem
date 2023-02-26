@@ -13,12 +13,12 @@ import voltskiya.mob.system.base.spawner.Spawner;
 
 public class SpawnSelectorDatabase {
 
-    private static AppleAJDTyped<SpawnSelector> manager;
-    private static final Map<SpawnSelectorUUID, SpawnSelector> selectors = new HashMap<>();
     public static final GsonBuilderDynamic SELECTOR_GSON = new GsonBuilderDynamic();
+    private static final Map<SpawnSelectorUUID, SpawnSelector> selectors = new HashMap<>();
+    private static AppleAJDTyped<SpawnSelector> manager;
 
     static {
-        Spawner.gson(SELECTOR_GSON);
+        Spawner.registerGson(SELECTOR_GSON);
     }
 
     public static void load() {

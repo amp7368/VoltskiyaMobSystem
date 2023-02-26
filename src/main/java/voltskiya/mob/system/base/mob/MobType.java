@@ -14,10 +14,10 @@ import voltskiya.mob.system.base.spawner.BuiltSpawner;
 
 public class MobType {
 
+    private final Set<SpawnSelectorUUID> spawnerTags = new HashSet<>();
     private MobUUID uuid;
     private String mobName;
     private EntitySerializable entity;
-    private Set<SpawnSelectorUUID> spawnerTags = new HashSet<>();
     private transient BuiltSpawner spawner;
 
     public String getName() {
@@ -26,10 +26,6 @@ public class MobType {
 
     public void spawn(Location location, Consumer<Entity> modifyEntity) {
         entity.spawn(location, modifyEntity);
-    }
-
-    public void addSpawnerTag() {
-        // todo add a tag to specify all spawners associated with this mob
     }
 
     public void init() {
@@ -59,6 +55,10 @@ public class MobType {
 
     public MobUUID getId() {
         return this.uuid;
+    }
+
+    public BuiltSpawner getRawSpawner() {
+        return this.spawner;
     }
 }
 
