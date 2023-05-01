@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <createTable name="dstored_mob" pkName="pk_dstored_mob">
+            <column name="id" type="bigint" primaryKey="true"/>
+            <column name="mob_type" type="integer" notnull="true"/>
+            <column name="location_world" type="smallint(3)"/>
+            <column name="location_x" type="bigint(28)"/>
+            <column name="location_y" type="bigint(28)"/>
+            <column name="location_z" type="bigint(28)"/>
+            <column name="location_x_decimal" type="double(16,16)"/>
+            <column name="location_y_decimal" type="double(16,16)"/>
+            <column name="location_z_decimal" type="double(16,16)"/>
+            <column name="location_yaw" type="float"/>
+            <column name="location_pitch" type="float"/>
+            <column name="spawn_delay" type="bigint" notnull="true"/>
+        </createTable>
+        <createTable name="stored_world" pkName="pk_stored_world">
+            <column name="id" type="smallint" primaryKey="true"/>
+            <column name="bukkit" type="uuid" notnull="true"/>
+            <column name="spawn_success_count" type="bigint" notnull="true"/>
+            <column name="spawn_fail_count" type="bigint" notnull="true"/>
+        </createTable>
+    </changeSet>
+</migration>

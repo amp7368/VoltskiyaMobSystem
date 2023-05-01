@@ -34,7 +34,7 @@ public class WorldAdapter {
     }
 
     private static void save() {
-        manager.save();
+        manager.saveNow();
     }
 
     public synchronized WorldUUID getWorld(UUID uuid) {

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractDatabaseMap<ID, MC, T> {
 
-    protected Map<ID, T> mapping = new HashMap<>();
+    protected final Map<ID, T> mapping = new HashMap<>();
 
     @Nullable
     public T get(@Nullable ID uuid) {

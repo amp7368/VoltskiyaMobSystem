@@ -85,7 +85,7 @@ public class MapRegenConfig {
         if (bukkit == null) return worldUUID;
         if (!bukkit.getName().equals(this.worldName)) {
             this.worldName = bukkit.getName();
-            this.save();
+            save();
         }
         return worldUUID;
     }
@@ -125,7 +125,7 @@ public class MapRegenConfig {
                     Material material = block.getBlock().getType();
                     if (MaterialUtils.isWalkThroughable(material)) {
                         hitAir = true;
-                    } else if (hitAir) {
+                    } else if (!hitAir) {
                         return block.add(0, 1, 0);
                     }
                     block.subtract(0, 1, 0);

@@ -36,6 +36,8 @@ public class WorldRegenTask implements Runnable {
     public void run() {
         try {
             this.doTask();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             callback.run();
         }
@@ -43,7 +45,7 @@ public class WorldRegenTask implements Runnable {
 
     private void doTask() {
         MobTypeSpawnerInBiome mobToTry = chooseMobToTry();
-        choosePreciseLocation(mobToTry.spawner());
+        if (mobToTry == null) return;
         SpawningContext spawnContext = SpawningContext.create(locationToTry);
         ShouldSpawningResult shouldSpawn = mobToTry.spawner().shouldSpawn(spawnContext);
         if (!shouldSpawn.canFutureSpawn()) return;
@@ -83,6 +85,7 @@ public class WorldRegenTask implements Runnable {
 
             spawners.add(mobSpawner);
         }
+        if (spawners.isEmpty()) return null;
         return this.random.choose(spawners);
     }
 

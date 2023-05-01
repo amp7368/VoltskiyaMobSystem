@@ -1,7 +1,7 @@
 package voltskiya.mob.system.storage.mob;
 
 import io.ebean.DB;
-import io.ebean.Query;
+import io.ebean.Model;
 import io.ebean.Transaction;
 import java.util.List;
 import voltskiya.mob.system.player.world.mob.MobWorldSpawning;
@@ -29,16 +29,14 @@ public class MobStorage {
     }
 
     public static void insertMobs(List<DStoredMob> mobsToAddBack) {
-        DB.getDefault().insertAll(mobsToAddBack);
+        mobsToAddBack.forEach(Model::save);
     }
 
     public static int countMobs(short worldId) {
-        String queryString = """
-            where location_world = :world
-            """;
-        Query<DStoredMob> query = DB.createQuery(DStoredMob.class, queryString);
-        query.setParameter("world", worldId);
-        return query.findCount();
+        return new QDStoredMob()
+            .where().and()
+            .location.world.eq(worldId)
+            .findCount();
     }
 
 }

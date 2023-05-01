@@ -15,6 +15,7 @@ public class RegenConfig {
 
     private static AppleAJDInst<RegenConfig> manager;
     public int maxPlayersWhileRunning = 0;
+    public int maxThreadPool = 5;
 
     public Map<UUID, MapRegenConfig> maps = new HashMap<>();
 

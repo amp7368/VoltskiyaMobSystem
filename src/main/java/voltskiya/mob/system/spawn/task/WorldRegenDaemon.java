@@ -1,16 +1,15 @@
 package voltskiya.mob.system.spawn.task;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.voltskiya.lib.timings.scheduler.VoltTask;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.spawn.ModuleSpawning;
+import voltskiya.mob.system.spawn.config.RegenConfig;
 
 public class WorldRegenDaemon {
 
-    private static final int MAX_SIZE = 5;
     private static WorldRegenDaemon instance;
-    private final ExecutorService service = Executors.newFixedThreadPool(5);
     private int serviceSize = 0;
     private BukkitTask runningScheduler;
 
@@ -23,19 +22,21 @@ public class WorldRegenDaemon {
     }
 
     private void scheduleTask() {
-        if (this.incrementTask())
-            service.submit(new WorldRegenTask(this::decrementTask));
+        if (this.incrementTask()) {
+            WorldRegenTask task = new WorldRegenTask(this::decrementTask);
+            VoltTask.cancelingAsyncTask(task).start(ModuleSpawning.get().getTaskManager());
+        }
     }
 
     private void decrementTask() {
-        synchronized (service) {
+        synchronized (this) {
             serviceSize--;
         }
     }
 
     private boolean incrementTask() {
-        synchronized (service) {
-            if (serviceSize >= MAX_SIZE)
+        synchronized (this) {
+            if (serviceSize >= RegenConfig.get().maxThreadPool)
                 return false;
             serviceSize++;
             return true;
@@ -61,7 +62,7 @@ public class WorldRegenDaemon {
     private void scheduleThisScheduler() {
         synchronized (this) {
             if (this.runningScheduler != null) return;
-            runningScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(VoltskiyaPlugin.get(), this::scheduleTask, 0, 10);
+            runningScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(VoltskiyaPlugin.get(), this::scheduleTask, 0, 1);
         }
     }
 }

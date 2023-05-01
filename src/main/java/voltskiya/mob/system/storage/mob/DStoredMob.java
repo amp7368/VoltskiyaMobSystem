@@ -1,6 +1,6 @@
 package voltskiya.mob.system.storage.mob;
 
-import io.ebean.annotation.Identity;
+import io.ebean.Model;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
@@ -13,10 +13,9 @@ import voltskiya.mob.system.base.mob.MobTypeDatabase;
 import voltskiya.mob.system.base.mob.MobUUID;
 
 @Entity
-public class DStoredMob {
+public class DStoredMob extends Model {
 
     @Id
-    @Identity
     private long id;
 
     @Convert(converter = MobUUIDConverter.class)

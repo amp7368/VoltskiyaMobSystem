@@ -7,10 +7,11 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
+    flatDir { dirs('lib') }
     maven { url "https://reposilite.appleptr16.com/appleptr16" }
     maven { url 'https://papermc.io/repo/repository/maven-public/' }
     maven { url 'https://repo.aikar.co/content/groups/aikar/' }
-    mavenLocal()
     mavenCentral()
     maven {
         name 'CodeMC'
@@ -33,7 +34,9 @@ configurations {
         resolutionStrategy.cacheChangingModulesFor 1, 'seconds'
     }
 }
-
+configurations {
+    testImplementation.extendsFrom compileOnly
+}
 project.ext.ebean_version = '13.14.1'
 // https://search.maven.org/search?q=g:io.ebean
 dependencies {
@@ -47,7 +50,7 @@ dependencies {
     // migration
     implementation "io.ebean:ebean-ddl-generator:${ebean_version}"
     implementation 'io.ebean:ebean-migration:13.7.0'
-    testImplementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+    compileOnly "org.glassfish.jaxb:jaxb-runtime:2.3.2"
 
     //json
     implementation "io.ebean:ebean-jackson-mapper:${ebean_version}"
@@ -55,7 +58,12 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
 
+    // driver
     implementation 'mysql:mysql-connector-java:8.0.33'
+
+    // logging
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.20.0'
+    compileOnly 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
 
     // volt
     compileOnly 'mc.pmc:voltpluginmanager:3.2-SNAPSHOT'
@@ -76,6 +84,7 @@ dependencies {
     compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
     compileOnly 'de.tr7zw:item-nbt-api-plugin:2.11.2'
 }
+
 ebean {
     debugLevel = 0 //0 - 9
 }

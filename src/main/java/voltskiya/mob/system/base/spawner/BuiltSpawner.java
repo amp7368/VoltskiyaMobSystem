@@ -35,14 +35,14 @@ public class BuiltSpawner {
         return new BuiltSpawner(Collections.singleton(selector));
     }
 
-    private Set<Spawner> compiledSpawners() {
+    private synchronized Set<Spawner> compiledSpawners() {
         if (this.compiled != null) return this.compiled;
         return this.compiled = fragments.stream()
             .map(SpawnSelector::getImplementation)
             .collect(Collectors.toUnmodifiableSet());
     }
 
-    public synchronized ShouldSpawningResult shouldSpawn(SpawningContext context) {
+    public ShouldSpawningResult shouldSpawn(SpawningContext context) {
         ShouldSpawningResult result = new ShouldSpawningResult();
         for (Spawner spawner : this.compiledSpawners()) {
             if (spawner.isBreaksRule(context)) return ShouldSpawningResult.SHOULD_REMOVE;
@@ -51,18 +51,18 @@ public class BuiltSpawner {
         return result;
     }
 
-    public synchronized SpawnerSummonResult prepare(SpawningContext context) {
+    public SpawnerSummonResult prepare(SpawningContext context) {
         SpawnerSummonResult result = new SpawnerSummonResult(context);
         for (Spawner spawner : compiledSpawners())
             spawner.prepareModifiers(context, result);
         return result;
     }
 
-    public synchronized SpawningComputedAttributes attributesTopLevel() {
+    public SpawningComputedAttributes attributesTopLevel() {
         return attributes(SpawningAttributes.empty()).getComputed();
     }
 
-    public synchronized SpawningAttributes attributes(SpawningAttributes original) {
+    public SpawningAttributes attributes(SpawningAttributes original) {
         if (attributes != null) {
             original.join(attributes);
             return original;

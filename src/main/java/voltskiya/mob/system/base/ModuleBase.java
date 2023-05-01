@@ -10,7 +10,6 @@ import voltskiya.mob.system.base.mob.MobTypeDatabase;
 import voltskiya.mob.system.base.selector.SpawnSelector;
 import voltskiya.mob.system.base.selector.SpawnSelectorDatabase;
 import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
-import voltskiya.mob.system.base.selector.api.SpawnSelectorController;
 import voltskiya.mob.system.base.util.MaterialDatabase;
 
 public class ModuleBase extends AbstractModule {
@@ -43,8 +42,6 @@ public class ModuleBase extends AbstractModule {
         MobTypeDatabase.init();
 
         BiomeDatabases.getBiomeType().loadGlobalStats();
-
-        new SpawnSelectorController().register();
     }
 
     @Override

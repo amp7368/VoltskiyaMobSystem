@@ -54,9 +54,7 @@ public class VoltskiyaDatabase {
     private static DatabaseConfig configureDatabase(DataSourceConfig dataSourceConfig) {
         DatabaseConfig dbConfig = new DatabaseConfig();
         dbConfig.setDataSourceConfig(dataSourceConfig);
-        dbConfig.setAutoPersistUpdates(true);
-        dbConfig.setDdlGenerate(true);
-        dbConfig.setDdlRun(false);
+        dbConfig.setRunMigration(true);
         dbConfig.addAll(getEntities());
         return dbConfig;
     }

@@ -1,17 +1,13 @@
 package voltskiya.mob.system.base.spawner.rule.temporal;
 
 public enum TimeOfDay {
-    MORNING(0),
-    NOON(1),
-    EVENING(2),
-    MIDNIGHT(3);
+    MORNING(),
+    NOON(),
+    EVENING(),
+    MIDNIGHT();
     private static TimeOfDay[] times;
 
-    private final int index;
-
-    TimeOfDay(int index) {
-        this.index = index;
-    }
+    private int index;
 
     public static TimeOfDay getTime(long time) {
         time += 6000;
@@ -27,22 +23,23 @@ public enum TimeOfDay {
         }
     }
 
+    private synchronized static TimeOfDay[] getOrderedTimes() {
+        if (times != null)
+            return times;
+        times = values();
+        for (int i = 0; i < times.length; i++) {
+            times[i].index = i;
+        }
+        return times;
+    }
+
     public TimeOfDay next() {
-        int timeLength = TimeOfDay.values().length;
+        int timeLength = getOrderedTimes().length;
         int nextIndex = (index + 1) % timeLength;
         return getOrderedTimes()[nextIndex];
     }
 
-    private static TimeOfDay[] getOrderedTimes() {
-        if (times != null)
-            return times;
-        times = new TimeOfDay[TimeOfDay.values().length];
-        for (TimeOfDay time : TimeOfDay.values())
-            times[time.index] = time;
-        return times;
-    }
-
     public long timeUntil(long time) {
-        return 0;
+        return 0; //todo
     }
 }

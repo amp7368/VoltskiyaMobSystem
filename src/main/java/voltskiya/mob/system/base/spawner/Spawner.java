@@ -64,6 +64,7 @@ public class Spawner {
 
     public long spawnDelay(SpawningContext context) {
         long spawnDelay = 0;
+        if (temporalRules.isEmpty()) return spawnDelay;
         for (SpawningTemporalRule rule : temporalRules) {
             spawnDelay = Math.max(spawnDelay, rule.spawnDelay(context));
         }

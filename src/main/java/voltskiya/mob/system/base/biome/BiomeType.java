@@ -38,6 +38,10 @@ public class BiomeType {
 //        return DecodeBiome.getBiomeFromKey(world, DecodeMinecraftKey.makeKey(this.minecraft));
 //    }
 
+    public String getName() {
+        return this.name;
+    }
+
     public BuiltSpawner getSpawner() {
         return spawnTags.compiled();
     }
