@@ -1,40 +1,41 @@
 package voltskiya.mob.system.base.mob;
 
 import apple.mc.utilities.data.serialize.EntitySerializable;
-import java.util.ArrayList;
-import java.util.HashSet;
+import apple.utilities.database.HasFilename;
+import apple.utilities.json.gson.GsonBuilderDynamic;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import voltskiya.mob.system.base.selector.SpawnSelector;
+import voltskiya.mob.system.base.selector.ExtendsMob;
+import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
 import voltskiya.mob.system.base.selector.SpawnSelectorUUID;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 
-public class MobType {
+public class MobType implements HasFilename {
 
-    private final Set<SpawnSelectorUUID> spawnerTags = new HashSet<>();
-    private MobUUID uuid;
-    private String mobName;
-    private EntitySerializable entity;
-    private transient BuiltSpawner spawner;
+    protected SpawnSelectorGrouping spawnerTags = new SpawnSelectorGrouping();
+    protected MobUUID uuid;
+    protected String mobName;
+    protected EntitySerializable entity;
+    protected transient BuiltSpawner spawner;
+
+    public static GsonBuilderDynamic gson(GsonBuilderDynamic gson) {
+        gson.registerTypeHierarchyAdapter(SpawnSelectorUUID.class, SpawnSelectorUUID.typeAdapter());
+        return gson.registerTypeHierarchyAdapter(MobUUID.class, MobUUID.typeAdapter());
+    }
 
     public String getName() {
         return mobName;
     }
 
-    public void spawn(Location location, Consumer<Entity> modifyEntity) {
-        entity.spawn(location, modifyEntity);
+    public EntitySerializable getEntity() {
+        return entity;
     }
 
     public void init() {
-        List<BuiltSpawner> parents = new ArrayList<>();
-        for (SpawnSelectorUUID tag : spawnerTags) {
-            SpawnSelector selector = tag.mapped();
-            selector.mobExtends(this.uuid);
-            parents.add(selector.compiled());
-        }
+        List<BuiltSpawner> parents = spawnerTags.getSpawnerTags()
+            .stream()
+            .map(tag -> tag.mapped().compiled())
+            .toList();
         spawner = BuiltSpawner.fromBuilt(parents);
     }
 
@@ -48,9 +49,9 @@ public class MobType {
         return obj instanceof MobType other && this.uuid.equals(other.uuid);
     }
 
-    public MobTypeSpawner getSpawner(BuiltSpawner biomeSpawner) {
+    public MobTypeSpawnerInBiome getBiomeSpawner(ExtendsMob extendsMob, BuiltSpawner biomeSpawner) {
         BuiltSpawner spawner = BuiltSpawner.fromBuilt(List.of(biomeSpawner, this.spawner));
-        return new MobTypeSpawner(this, spawner);
+        return new MobTypeSpawnerInBiome(this, extendsMob, spawner);
     }
 
     public MobUUID getId() {
@@ -60,5 +61,20 @@ public class MobType {
     public BuiltSpawner getRawSpawner() {
         return this.spawner;
     }
+
+    @Override
+    public String getSaveFileName() {
+        return this.uuid.getId() + ".json";
+    }
+
+    public SpawnSelectorGrouping getSpawnerTags() {
+        this.spawnerTags.setName(this.getName(), this.uuid);
+        return this.spawnerTags;
+    }
+
+    public void tagMob(Entity entity) {
+        MobTypeDatabase.tagMob(entity, this);
+    }
+
 }
 

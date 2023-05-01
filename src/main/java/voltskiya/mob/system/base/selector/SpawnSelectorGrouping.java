@@ -1,6 +1,10 @@
 package voltskiya.mob.system.base.selector;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
@@ -8,16 +12,12 @@ import voltskiya.mob.system.base.util.UUIDWrapper;
 
 public class SpawnSelectorGrouping {
 
-    private final Set<SpawnSelectorUUID> extendsSpawnSelector = new HashSet<>();
+    protected List<SpawnSelectorUUID> extendsSpawnSelector = new ArrayList<>();
     private transient BuiltSpawner compiled = null;
     private transient String formattedName;
 
     public void setName(String name, UUIDWrapper<?, ?> uuid) {
         this.formattedName = String.format("%s [%s]", name, uuid.toString());
-    }
-
-    public void addExtends(SpawnSelectorUUID selector) {
-        extendsSpawnSelector.add(selector);
     }
 
     public void init() throws CircularDependencyException {
@@ -26,11 +26,7 @@ public class SpawnSelectorGrouping {
 
     @NotNull
     public BuiltSpawner compiled() {
-        Set<BuiltSpawner> allSelectors = new HashSet<>();
-        for (SpawnSelectorUUID uuid : this.extendsSpawnSelector) {
-            allSelectors.add(uuid.mapped().compiled());
-        }
-        return BuiltSpawner.fromBuilt(allSelectors);
+        return compiled;
     }
 
     public BuiltSpawner init(InitializingCallerStack callerStack) throws CircularDependencyException {
@@ -44,6 +40,10 @@ public class SpawnSelectorGrouping {
         }
         callerStack.pop();
         return compiled = BuiltSpawner.fromBuilt(allSelectors);
+    }
+
+    public Collection<SpawnSelectorUUID> getSpawnerTags() {
+        return Collections.unmodifiableCollection(this.extendsSpawnSelector);
     }
 
     public String getName() {

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeUUID;
 import voltskiya.mob.system.base.spawner.rule.temporal.TimeOfDay;
-import voltskiya.mob.system.base.storage.mob.DStoredMob;
+import voltskiya.mob.system.storage.mob.DStoredMob;
 
 public record SpawningContext(Location location, BiomeUUID biomeUUID, Block feetBlock, Block belowFeetBlock) {
 

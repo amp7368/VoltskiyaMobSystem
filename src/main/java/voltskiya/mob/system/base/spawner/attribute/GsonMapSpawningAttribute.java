@@ -17,7 +17,7 @@ public enum GsonMapSpawningAttribute implements GsonEnumTypeHolder<SpawningAttri
         this.typeClass = typeClass;
     }
 
-    public static void register(GsonBuilderDynamic gson) {
+    public static void gson(GsonBuilderDynamic gson) {
         GsonEnumTypeAdapter.register(values(), gson, SpawningAttributeModifier.class);
     }
 

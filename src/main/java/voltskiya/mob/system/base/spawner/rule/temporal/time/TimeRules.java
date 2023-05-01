@@ -13,6 +13,10 @@ public class TimeRules extends SpawningTemporalRule {
             this.put(time, true);
     }};
 
+    public TimeRules() {
+        super("time");
+    }
+
     public void merge(TimeRules overrideWith) {
         this.allowedTimes = overrideWith.allowedTimes;
     }

@@ -3,33 +3,36 @@ package voltskiya.mob.system.base.selector;
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDTyped;
 import apple.utilities.json.gson.GsonBuilderDynamic;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.base.spawner.Spawner;
 
-public class SpawnSelectorDatabase {
+public class SpawnSelectorDatabase extends HashMap<SpawnSelectorUUID, SpawnSelector> {
 
-    public static final GsonBuilderDynamic SELECTOR_GSON = new GsonBuilderDynamic();
     private static final Map<SpawnSelectorUUID, SpawnSelector> selectors = new HashMap<>();
     private static AppleAJDTyped<SpawnSelector> manager;
 
-    static {
-        Spawner.registerGson(SELECTOR_GSON);
-    }
-
     public static void load() {
-        File file = ModuleBase.get().getFile("SpawnSelectors");
-
-        manager = AppleAJD.createTyped(SpawnSelector.class, file, FileIOServiceNow.taskCreator(), SELECTOR_GSON.create());
+        File folder = ModuleBase.get().getFile("SpawnSelectors");
+        manager = AppleAJD.createTyped(SpawnSelector.class, folder, FileIOServiceNow.taskCreator(), gson());
 
         for (SpawnSelector selector : manager.loadFolderNow()) {
             selectors.put(selector.getUUID(), selector);
         }
-        SpawnSelector.initAll(selectors.values());
+    }
+
+    public static Gson gson() {
+        GsonBuilderDynamic gson = new GsonBuilderDynamic().withBaseBuilder(() -> new GsonBuilder().enableComplexMapKeySerialization());
+        SpawnSelector.gson(gson);
+        return Spawner.gson(gson).create();
     }
 
 
@@ -51,6 +54,12 @@ public class SpawnSelectorDatabase {
     public static void save(SpawnSelector selector) {
         synchronized (selectors) {
             manager.saveInFolderNow(selector);
+        }
+    }
+
+    public static Collection<SpawnSelector> listSelectors() {
+        synchronized (selectors) {
+            return Collections.unmodifiableCollection(selectors.values());
         }
     }
 }

@@ -16,7 +16,7 @@ public class SpawnSelectorDatabaseQuery extends JsonApiDataQuery<SpawnSelector> 
 
     @Override
     public SpawnSelector update(JsonElement inst) {
-        SpawnSelector selector = SpawnSelectorDatabase.SELECTOR_GSON.create().fromJson(inst, SpawnSelector.class);
+        SpawnSelector selector = SpawnSelectorDatabase.gson().fromJson(inst, SpawnSelector.class);
         SpawnSelectorDatabase.save(selector);
         return selector;
     }

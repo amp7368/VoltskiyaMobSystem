@@ -1,4 +1,4 @@
-package voltskiya.mob.system.base.storage.mob;
+package voltskiya.mob.system.storage.mob;
 
 import io.ebean.annotation.Identity;
 import javax.persistence.Column;

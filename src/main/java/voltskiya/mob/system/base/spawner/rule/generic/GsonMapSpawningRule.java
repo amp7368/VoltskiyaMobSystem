@@ -22,7 +22,7 @@ public enum GsonMapSpawningRule implements GsonEnumTypeHolder<SpawningRule> {
         this.type = type;
     }
 
-    public static void register(GsonBuilderDynamic gson) {
+    public static void gson(GsonBuilderDynamic gson) {
         GsonEnumTypeAdapter.register(values(), gson, SpawningRule.class);
     }
 

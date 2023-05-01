@@ -1,4 +1,4 @@
-package voltskiya.mob.system.base.storage.mob;
+package voltskiya.mob.system.storage.mob;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

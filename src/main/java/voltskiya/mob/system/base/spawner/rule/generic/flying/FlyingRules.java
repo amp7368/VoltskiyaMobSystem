@@ -9,14 +9,10 @@ import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 
 public class FlyingRules extends SpawningRule {
 
-    private int spawnAboveGroundHeight = 0;
+    protected int spawnAboveGroundHeight = 0;
 
     public FlyingRules() {
         super(GsonMapSpawningRule.FLYING.getTypeId());
-    }
-
-    public void merge(FlyingRules overrideWith) {
-        this.spawnAboveGroundHeight = overrideWith.spawnAboveGroundHeight;
     }
 
     @Override

@@ -2,20 +2,23 @@ package voltskiya.mob.system.base.biome.database;
 
 import java.util.List;
 import voltskiya.mob.system.base.biome.BiomeType;
+import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
 
 public class BiomeTypeDatabase extends AbstractBiomeDatabase<BiomeType> {
 
-    private double globalSpawnRate = 0;
+    private transient double globalSpawnRate = 0;
 
     public void loadGlobalStats() {
-        List<BiomeType> allBiomes = this.list();
-        for (BiomeType biome : allBiomes) {
+        for (BiomeType biome : this.list()) {
             globalSpawnRate += biome.getSpawner().attributesTopLevel().getSpawnRate();
-            biome.loadGlobalStats();
         }
     }
 
     public double getGlobalSpawnRate() {
         return globalSpawnRate;
+    }
+
+    public List<SpawnSelectorGrouping> listSelectors() {
+        return list().stream().map(BiomeType::getSpawnerTags).toList();
     }
 }

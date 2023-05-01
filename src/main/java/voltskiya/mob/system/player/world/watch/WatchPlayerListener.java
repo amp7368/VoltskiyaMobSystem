@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.VoltskiyaPlugin;
 import voltskiya.mob.system.base.mob.MobTypeDatabase;
 import voltskiya.mob.system.base.mob.MobUUID;
-import voltskiya.mob.system.base.storage.mob.DStoredMob;
-import voltskiya.mob.system.base.storage.mob.MobStorage;
+import voltskiya.mob.system.storage.mob.DStoredMob;
+import voltskiya.mob.system.storage.mob.MobStorage;
 
 public class WatchPlayerListener implements Listener {
 

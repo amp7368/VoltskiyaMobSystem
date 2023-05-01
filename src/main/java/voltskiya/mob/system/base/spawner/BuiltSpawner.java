@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import voltskiya.mob.system.base.mob.MobUUID;
+import voltskiya.mob.system.base.selector.ExtendsMob;
 import voltskiya.mob.system.base.selector.SpawnSelector;
 import voltskiya.mob.system.base.spawner.attribute.base.SpawningAttributes;
 import voltskiya.mob.system.base.spawner.attribute.base.SpawningComputedAttributes;
@@ -17,8 +17,8 @@ import voltskiya.mob.system.player.world.mob.SpawnerSummonResult;
 public class BuiltSpawner {
 
     private final Set<SpawnSelector> fragments;
-    private Set<Spawner> compiled;
-    private Set<MobUUID> extendedByMob = null;
+    private Set<Spawner> compiled = null;
+    private List<ExtendsMob> extendsMob = null;
     private SpawningAttributes attributes = null;
 
     private BuiltSpawner(Set<SpawnSelector> fragments) {
@@ -35,29 +35,26 @@ public class BuiltSpawner {
         return new BuiltSpawner(Collections.singleton(selector));
     }
 
-    public void init() {
-        this.compiled = fragments.stream().map(SpawnSelector::getImplementation).collect(Collectors.toUnmodifiableSet());
-        this.extendedByMob = new HashSet<>();
-        for (SpawnSelector fragment : fragments) {
-            extendedByMob.addAll(fragment.getExtendedByMob());
-        }
+    private Set<Spawner> compiledSpawners() {
+        if (this.compiled != null) return this.compiled;
+        return this.compiled = fragments.stream()
+            .map(SpawnSelector::getImplementation)
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     public synchronized ShouldSpawningResult shouldSpawn(SpawningContext context) {
         ShouldSpawningResult result = new ShouldSpawningResult();
-        for (Spawner spawner : compiled) {
+        for (Spawner spawner : this.compiledSpawners()) {
             if (spawner.isBreaksRule(context)) return ShouldSpawningResult.SHOULD_REMOVE;
             result.delayUntil(spawner.spawnDelay(context));
         }
         return result;
     }
 
-    public synchronized SpawnerSummonResult spawnMob(SpawningContext context) {
+    public synchronized SpawnerSummonResult prepare(SpawningContext context) {
         SpawnerSummonResult result = new SpawnerSummonResult(context);
-        for (Spawner spawner : compiled)
-            spawner.preModify(context, result);
-        for (Spawner spawner : compiled)
-            spawner.modify(context, result);
+        for (Spawner spawner : compiledSpawners())
+            spawner.prepareModifiers(context, result);
         return result;
     }
 
@@ -71,13 +68,16 @@ public class BuiltSpawner {
             return original;
         }
         attributes = SpawningAttributes.empty();
-        for (Spawner spawner : compiled) {
+        for (Spawner spawner : compiledSpawners()) {
             spawner.attributes(attributes);
         }
         return attributes;
     }
 
-    public synchronized Set<MobUUID> getExtendedByMob() {
-        return this.extendedByMob;
+    public synchronized List<ExtendsMob> getExtendsMob() {
+        if (this.extendsMob != null) return this.extendsMob;
+        return this.extendsMob = fragments.stream()
+            .flatMap(SpawnSelector::getExtendsMobStream)
+            .toList();
     }
 }

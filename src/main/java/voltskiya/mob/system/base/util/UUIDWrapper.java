@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public abstract class UUIDWrapper<Id, Mapped> {
 
-    private final Id id;
+    protected Id id;
 
     public UUIDWrapper(Id id) {
         this.id = id;

@@ -8,7 +8,7 @@ import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 
 public abstract class BlockRules extends SpawningRule {
 
-    private final Set<Material> blocks = new HashSet<>();
+    protected Set<Material> blocks = new HashSet<>();
 
     public BlockRules(String typeId) {
         super(typeId);

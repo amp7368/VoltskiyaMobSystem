@@ -1,6 +1,5 @@
 package voltskiya.mob.system.base;
 
-import com.google.gson.annotations.SerializedName;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractDatabaseMap<ID, MC, T> {
 
-    private final Map<ID, T> mapping = new HashMap<>();
+    protected Map<ID, T> mapping = new HashMap<>();
 
     @Nullable
     public T get(@Nullable ID uuid) {
@@ -30,7 +29,8 @@ public abstract class AbstractDatabaseMap<ID, MC, T> {
     public void put(@NotNull ID id, @NotNull T val) {
         this.mapping.put(id, val);
     }
-    public List<T> list(){
+
+    public List<T> list() {
         return List.copyOf(mapping.values());
     }
 }

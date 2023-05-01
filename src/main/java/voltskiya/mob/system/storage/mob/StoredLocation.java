@@ -1,11 +1,11 @@
-package voltskiya.mob.system.base.storage.mob;
+package voltskiya.mob.system.storage.mob;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.base.storage.world.WorldAdapter;
+import voltskiya.mob.system.storage.world.WorldAdapter;
 
 @Embeddable
 public class StoredLocation {

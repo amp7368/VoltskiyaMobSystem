@@ -1,4 +1,4 @@
-package voltskiya.mob.system.base.storage.world;
+package voltskiya.mob.system.storage.world;
 
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -22,4 +22,5 @@ public class WorldUUID {
     public World getBukkit() {
         return Bukkit.getWorld(uuid);
     }
+
 }

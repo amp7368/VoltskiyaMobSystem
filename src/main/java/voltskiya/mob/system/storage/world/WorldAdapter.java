@@ -1,4 +1,4 @@
-package voltskiya.mob.system.base.storage.world;
+package voltskiya.mob.system.storage.world;
 
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDInst;
@@ -16,8 +16,8 @@ public class WorldAdapter {
 
     private static AppleAJDInst<WorldAdapter> manager;
     private final transient BiMap<UUID, WorldUUID> uuidToId = HashBiMap.create();
-    private transient short nextId;
     private final Map<Short, WorldUUID> worlds = new HashMap<>();
+    private transient short nextId;
 
     public static void load() {
         File file = ModuleSpawning.get().getFile("Worlds.json");
@@ -25,6 +25,8 @@ public class WorldAdapter {
         WorldAdapter db = manager.loadOrMake();
         int nextId = db.worlds.keySet().stream().max(Short::compareTo).orElse((short) -1) + 1;
         db.nextId = (short) nextId;
+        for (WorldUUID world : db.worlds.values())
+            db.uuidToId.put(world.uuid, world);
     }
 
     public static WorldAdapter get() {

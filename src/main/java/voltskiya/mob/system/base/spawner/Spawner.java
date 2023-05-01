@@ -7,28 +7,31 @@ import voltskiya.mob.system.base.spawner.attribute.GsonMapSpawningAttribute;
 import voltskiya.mob.system.base.spawner.attribute.base.SpawningAttributeModifier;
 import voltskiya.mob.system.base.spawner.attribute.base.SpawningAttributes;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
-import voltskiya.mob.system.base.spawner.modifier.PreSpawningModifierFactory;
+import voltskiya.mob.system.base.spawner.modifier.GsonMapSpawningModifier;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifierFactory;
 import voltskiya.mob.system.base.spawner.rule.generic.GsonMapSpawningRule;
 import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
+import voltskiya.mob.system.base.spawner.rule.temporal.GsonMapSpawningTemporalRule;
 import voltskiya.mob.system.base.spawner.rule.temporal.SpawningTemporalRule;
 import voltskiya.mob.system.player.world.mob.SpawnerSummonResult;
 
 public class Spawner {
 
-    private final List<SpawningRule> rules = new ArrayList<>();
-    private final List<SpawningTemporalRule> temporalRules = new ArrayList<>();
-    private final List<SpawningModifierFactory> modifiers = new ArrayList<>();
-    private final List<PreSpawningModifierFactory> preModifiers = new ArrayList<>();
+    protected List<SpawningRule> rules = new ArrayList<>();
+    protected List<SpawningTemporalRule> temporalRules = new ArrayList<>();
+    protected List<SpawningModifierFactory> modifiers = new ArrayList<>();
 
-    private final List<SpawningAttributeModifier> attributes = new ArrayList<>();
+    protected List<SpawningAttributeModifier> attributes = new ArrayList<>();
 
     public Spawner() {
     }
 
-    public static void registerGson(GsonBuilderDynamic gson) {
-        GsonMapSpawningRule.register(gson);
-        GsonMapSpawningAttribute.register(gson);
+    public static GsonBuilderDynamic gson(GsonBuilderDynamic gson) {
+        GsonMapSpawningRule.gson(gson);
+        GsonMapSpawningModifier.gson(gson);
+        GsonMapSpawningAttribute.gson(gson);
+        GsonMapSpawningTemporalRule.gson(gson);
+        return gson;
     }
 
     public static Spawner biomeDefault() {
@@ -41,10 +44,6 @@ public class Spawner {
 
     public void addTemporalRule(SpawningTemporalRule rule) {
         temporalRules.add(rule);
-    }
-
-    public void addPreModifier(PreSpawningModifierFactory rule) {
-        preModifiers.add(rule);
     }
 
     public void addModifier(SpawningModifierFactory modifier) {
@@ -71,15 +70,9 @@ public class Spawner {
         return spawnDelay;
     }
 
-    public void preModify(SpawningContext context, SpawnerSummonResult result) {
-        for (PreSpawningModifierFactory modifier : this.preModifiers) {
-            modifier.createModifier(context).preModify(result);
-        }
-    }
-
-    public void modify(SpawningContext context, SpawnerSummonResult result) {
+    public void prepareModifiers(SpawningContext context, SpawnerSummonResult result) {
         for (SpawningModifierFactory modifier : this.modifiers) {
-            result.addModifier(modifier.createModifier(context));
+            modifier.createModifier(context, result);
         }
     }
 

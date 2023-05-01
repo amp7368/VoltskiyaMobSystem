@@ -1,49 +1,49 @@
 package voltskiya.mob.system.base.biome;
 
-import apple.nms.decoding.world.DecodeBiome;
-import apple.nms.decoding.world.DecodeMinecraftKey;
-import java.util.Set;
-import net.minecraft.world.level.biome.Biome;
+import com.google.gson.GsonBuilder;
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
-import voltskiya.mob.system.base.mob.MobUUID;
 import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
+import voltskiya.mob.system.base.selector.SpawnSelectorUUID;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 
 public class BiomeType {
 
-    private final SpawnSelectorGrouping spawnTags = new SpawnSelectorGrouping();
-    public BiomeUUID id;
-    public NamespacedKey minecraft;
-    private double globalSpawnRate = 0;
+    public BiomeUUID uuid;
+    protected SpawnSelectorGrouping spawnTags;
+    protected String name;
+    protected NamespacedKey minecraft;
+    private transient double globalSpawnRate = 0;
 
-    public BiomeType(NamespacedKey minecraft) {
-        this.id = BiomeUUID.random();
+    public BiomeType(BiomeUUID uuid, SpawnSelectorGrouping spawnTags, String name, NamespacedKey minecraft) {
+        this.uuid = uuid;
+        this.spawnTags = spawnTags;
+        this.name = name;
         this.minecraft = minecraft;
     }
 
-    public BiomeType() {
+    public BiomeType(NamespacedKey minecraft) {
+        this.uuid = BiomeUUID.random();
+        this.name = minecraft.asString();
+        this.minecraft = minecraft;
+        this.spawnTags = new SpawnSelectorGrouping();
     }
 
-    public Biome getMinecraft(World world) {
-        return DecodeBiome.getBiomeFromKey(world, DecodeMinecraftKey.makeKey(this.minecraft));
+    public static GsonBuilder gson(GsonBuilder gson) {
+        gson.registerTypeHierarchyAdapter(BiomeUUID.class, BiomeUUID.typeAdapter());
+        gson.registerTypeHierarchyAdapter(SpawnSelectorUUID.class, SpawnSelectorUUID.typeAdapter());
+        return gson;
     }
+
+//    public Biome getMinecraft(World world) {
+//        return DecodeBiome.getBiomeFromKey(world, DecodeMinecraftKey.makeKey(this.minecraft));
+//    }
 
     public BuiltSpawner getSpawner() {
         return spawnTags.compiled();
     }
 
-    public void loadGlobalStats() {
-        Set<MobUUID> mobsInBiome = spawnTags.compiled().getExtendedByMob();
-        for (MobUUID mob : mobsInBiome) {
-            BuiltSpawner mobSpawner = mob.mapped().getRawSpawner();
-            globalSpawnRate += mobSpawner.attributesTopLevel().getSpawnRate();
-        }
-        if (globalSpawnRate == 0) globalSpawnRate = 1;
+    public SpawnSelectorGrouping getSpawnerTags() {
+        this.spawnTags.setName(this.name, this.uuid);
+        return this.spawnTags;
     }
-
-    public double getGlobalSpawnRate() {
-        return globalSpawnRate;
-    }
-
 }

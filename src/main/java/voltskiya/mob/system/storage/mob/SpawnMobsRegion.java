@@ -1,8 +1,8 @@
-package voltskiya.mob.system.base.storage.mob;
+package voltskiya.mob.system.storage.mob;
 
 import org.bukkit.World;
 import voltskiya.mob.system.VoltskiyaPlugin;
-import voltskiya.mob.system.base.storage.world.WorldAdapter;
+import voltskiya.mob.system.storage.world.WorldAdapter;
 
 public class SpawnMobsRegion {
 

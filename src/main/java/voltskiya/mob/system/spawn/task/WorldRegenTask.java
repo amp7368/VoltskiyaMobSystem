@@ -2,44 +2,72 @@ package voltskiya.mob.system.spawn.task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
 import voltskiya.apple.utilities.chance.weight.ChanceWeightedChoice;
 import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeType;
-import voltskiya.mob.system.base.mob.MobTypeSpawner;
-import voltskiya.mob.system.base.mob.MobUUID;
+import voltskiya.mob.system.base.mob.MobTypeSpawnerInBiome;
+import voltskiya.mob.system.base.selector.ExtendsMob;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
-import voltskiya.mob.system.base.storage.mob.DStoredMob;
-import voltskiya.mob.system.base.storage.mob.MobStorage;
 import voltskiya.mob.system.player.world.mob.ShouldSpawningResult;
+import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.spawn.config.MapRegenConfig;
 import voltskiya.mob.system.spawn.config.RegenStatsMap;
+import voltskiya.mob.system.storage.mob.DStoredMob;
+import voltskiya.mob.system.storage.mob.MobStorage;
 
 public class WorldRegenTask implements Runnable {
 
+    private final Runnable callback;
+    private final ChanceWeightedChoice<MobTypeSpawnerInBiome> random = new ChanceWeightedChoice<>(
+        spawner -> spawner.extendsMob().spawnWeight);
     private Location locationToTry;
     private BiomeType biomeType;
-    private final ChanceWeightedChoice<MobTypeSpawner> random = new ChanceWeightedChoice<>(
-        spawner -> spawner.attributesTopLevel().getNormalizedSpawnRate(biomeType.getGlobalSpawnRate()));
     private BuiltSpawner biomeSpawner;
     private boolean isDone = false;
 
+    public WorldRegenTask(Runnable callback) {
+        this.callback = callback;
+    }
+
     @Override
     public void run() {
-        MobTypeSpawner mobToTry = chooseMobToTry();
+        try {
+            this.doTask();
+        } finally {
+            callback.run();
+        }
+    }
+
+    private void doTask() {
+        MobTypeSpawnerInBiome mobToTry = chooseMobToTry();
+        choosePreciseLocation(mobToTry.spawner());
         SpawningContext spawnContext = SpawningContext.create(locationToTry);
         ShouldSpawningResult shouldSpawn = mobToTry.spawner().shouldSpawn(spawnContext);
         if (!shouldSpawn.canFutureSpawn()) return;
 
         DStoredMob spawnedMob = new DStoredMob(mobToTry.mob().getId(), locationToTry);
         spawnedMob.setSpawnDelay(shouldSpawn.getSpawnDelay());
+        logMobSpawn(spawnedMob);
         MobStorage.insertMobs(List.of(spawnedMob));
     }
 
-    public MobTypeSpawner chooseMobToTry() {
+    private void logMobSpawn(DStoredMob spawnedMob) {
+        Location loc = spawnedMob.getLocation();
+        String mobName = spawnedMob.getMobType().getName();
+        String worldName = loc.getWorld().getName();
+        String message = String.format("create mob %s at %s %d %d %d", mobName, worldName, loc.getBlockX(), loc.getBlockY(),
+            loc.getBlockZ());
+        ModuleSpawning.get().logger().info(message);
+    }
+
+    private void choosePreciseLocation(BuiltSpawner spawner) {
+
+    }
+
+    public MobTypeSpawnerInBiome chooseMobToTry() {
         chooseLocation();
         if (isDone()) return null;
 
@@ -48,11 +76,11 @@ public class WorldRegenTask implements Runnable {
 
         checkBiomeSpawnerFails();
         if (isDone()) return null;
+        List<ExtendsMob> mobsInBiome = biomeSpawner.getExtendsMob();
+        List<MobTypeSpawnerInBiome> spawners = new ArrayList<>();
+        for (ExtendsMob extendsMob : mobsInBiome) {
+            MobTypeSpawnerInBiome mobSpawner = extendsMob.mob.mapped().getBiomeSpawner(extendsMob, biomeSpawner);
 
-        Set<MobUUID> mobsInBiome = biomeSpawner.getExtendedByMob();
-        List<MobTypeSpawner> spawners = new ArrayList<>();
-        for (MobUUID mob : mobsInBiome) {
-            MobTypeSpawner mobSpawner = mob.mapped().getSpawner(biomeSpawner);
             spawners.add(mobSpawner);
         }
         return this.random.choose(spawners);
@@ -70,7 +98,7 @@ public class WorldRegenTask implements Runnable {
 
     private void chooseLocation() {
         MapRegenConfig map = RegenStatsMap.chooseMap();
-        locationToTry = map.randomLocation();
+        locationToTry = map.randomGroundLocation();
         if (locationToTry == null) setDone();
     }
 

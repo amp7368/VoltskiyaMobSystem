@@ -1,46 +1,54 @@
 package voltskiya.mob.system.base.selector;
 
 import apple.utilities.database.HasFilename;
+import apple.utilities.json.gson.GsonBuilderDynamic;
 import apple.utilities.util.FileFormatting;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Stream;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.base.mob.MobUUID;
-import voltskiya.mob.system.base.selector.api.SpawnSelectorDatabaseQuery;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 import voltskiya.mob.system.base.spawner.Spawner;
 
 public class SpawnSelector implements HasFilename {
 
-    private SpawnSelectorUUID uuid;
-    private String name;
-    private final Spawner implementation = new Spawner();
-    private final SpawnSelectorGrouping extendsClause = new SpawnSelectorGrouping();
-    private transient BuiltSpawner cachedSpawner;
-    private final transient Set<MobUUID> implementationExtendedByMobs = new HashSet<>();
+    protected Spawner implementation = new Spawner();
+    protected List<ExtendsMob> extendsMob = new ArrayList<>();
+    protected SpawnSelectorGrouping extendsClause = new SpawnSelectorGrouping();
+    protected SpawnSelectorUUID uuid;
+    protected String name;
+    protected transient BuiltSpawner cachedSpawner;
 
     public SpawnSelector(SpawnSelectorUUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
-        new SpawnSelectorDatabaseQuery(this);
     }
 
     public SpawnSelector() {
-        new SpawnSelectorDatabaseQuery(this);
     }
 
-    public static void initAll(Collection<SpawnSelector> selectors) {
-        for (SpawnSelector selector : selectors) selector.extendsClause.setName(selector.name, selector.uuid);
+    public static void initAll(List<SpawnSelectorGrouping> selectorGroups, Collection<SpawnSelector> selectors) {
+        selectorGroups = new ArrayList<>(selectorGroups);
         for (SpawnSelector selector : selectors) {
+            selectorGroups.add(selector.extendsClause);
+            selector.extendsClause.setName(selector.name, selector.uuid);
+        }
+        for (SpawnSelectorGrouping selector : selectorGroups) {
             try {
-                selector.extendsClause.init();
+                selector.init();
             } catch (CircularDependencyException e) {
                 ModuleBase.get().logger().error("Circular dependency!", e);
                 // todo do better than print the error
             }
         }
+    }
+
+    public static GsonBuilderDynamic gson(GsonBuilderDynamic gson) {
+        gson.registerTypeHierarchyAdapter(SpawnSelectorUUID.class, SpawnSelectorUUID.typeAdapter());
+        gson.registerTypeHierarchyAdapter(MobUUID.class, MobUUID.typeAdapter());
+        return gson;
     }
 
     public BuiltSpawner compiled() {
@@ -69,18 +77,14 @@ public class SpawnSelector implements HasFilename {
 
     @Override
     public String getSaveFileName() {
-        return FileFormatting.extensionJson(name);
+        return FileFormatting.extensionJson(this.uuid.getId().toString());
     }
 
     public SpawnSelectorUUID getUUID() {
         return this.uuid;
     }
 
-    public void mobExtends(MobUUID mob) {
-        this.implementationExtendedByMobs.add(mob);
-    }
-
-    public Collection<MobUUID> getExtendedByMob() {
-        return implementationExtendedByMobs.stream().toList();
+    public Stream<ExtendsMob> getExtendsMobStream() {
+        return this.extendsMob.stream();
     }
 }

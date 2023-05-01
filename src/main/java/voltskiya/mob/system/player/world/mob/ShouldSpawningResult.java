@@ -28,4 +28,12 @@ public class ShouldSpawningResult {
     public boolean canFutureSpawn() {
         return !shouldRemove;
     }
+
+    @Override
+    public String toString() {
+        return "ShouldSpawningResult{" +
+            "shouldRemove=" + shouldRemove +
+            ", spawnDelay=" + spawnDelay +
+            '}';
+    }
 }

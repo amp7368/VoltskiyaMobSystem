@@ -1,15 +1,28 @@
 package voltskiya.mob.system.spawn.config;
 
+import apple.mc.utilities.item.material.MaterialUtils;
 import java.util.Random;
 import java.util.UUID;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.base.storage.world.WorldAdapter;
-import voltskiya.mob.system.base.storage.world.WorldUUID;
+import voltskiya.mob.system.storage.world.WorldAdapter;
+import voltskiya.mob.system.storage.world.WorldUUID;
 
 public class MapRegenConfig {
 
+
+    private static final byte RANDOM_LOCATION_DIAMETER = 20;
+    private static final Vector RANDOM_LOCATION_RADIUS_VECTOR;
+
+    static {
+        int radius = RANDOM_LOCATION_DIAMETER / 2;
+        RANDOM_LOCATION_RADIUS_VECTOR = new Vector(radius, radius, radius);
+    }
+
+    private transient final Random random = new Random();
     public UUID world;
     public String worldName;
     //todo set this in-game through command
@@ -20,7 +33,6 @@ public class MapRegenConfig {
     public int z2 = 0;
     public double density = 20.0;
     private transient WorldUUID worldUUID;
-    private transient final Random random = new Random();
 
     public MapRegenConfig(World world) {
         this.world = world.getUID();
@@ -99,5 +111,31 @@ public class MapRegenConfig {
             z = random.nextInt(zRange) + zMin();
         }
         return new Location(bukkit, x, y, z);
+    }
+
+    public Location randomGroundLocation() {
+        Location center = randomLocation();
+        if (center == null) return null;
+        Location cornerLoc = center.add(RANDOM_LOCATION_RADIUS_VECTOR);
+        Location block = cornerLoc.clone();
+        for (byte xi = 0; xi < RANDOM_LOCATION_DIAMETER; xi++) {
+            for (byte zi = 0; zi < RANDOM_LOCATION_DIAMETER; zi++) {
+                boolean hitAir = false;
+                for (byte yi = 0; yi < RANDOM_LOCATION_DIAMETER; yi++) {
+                    Material material = block.getBlock().getType();
+                    if (MaterialUtils.isWalkThroughable(material)) {
+                        hitAir = true;
+                    } else if (hitAir) {
+                        return block.add(0, 1, 0);
+                    }
+                    block.subtract(0, 1, 0);
+                }
+                block.subtract(0, 0, 1);
+                block.setY(cornerLoc.getY());
+            }
+            block.subtract(1, 0, 0);
+            block.setZ(cornerLoc.getZ());
+        }
+        return null;
     }
 }

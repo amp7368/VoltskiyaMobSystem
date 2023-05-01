@@ -1,46 +1,42 @@
 package voltskiya.mob.system.base.mob;
 
 import apple.mc.utilities.data.serialize.GsonSerializeMC;
-import apple.utilities.database.HasFilename;
 import apple.utilities.database.ajd.AppleAJD;
 import apple.utilities.database.ajd.AppleAJDTyped;
 import apple.utilities.json.gson.GsonBuilderDynamic;
+import com.google.gson.Gson;
 import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.spawn.ModuleSpawning;
+import voltskiya.mob.system.base.ModuleBase;
+import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
 
-public class MobTypeDatabase implements HasFilename {
+public class MobTypeDatabase {
 
-    private static final String MOB_TYPE_PREFIX = "volt.mob.";
+    private static final String MOB_TYPE_ID_PREFIX = "volt.mob.id.";
+    private static final String MOB_TYPE_NAME_PREFIX = "volt.mob.name.";
     private static final Map<MobUUID, MobType> mobs = new HashMap<>();
     private static final Map<String, MobUUID> nameToMob = new HashMap<>();
 
-    private MobUUID uuid;
-
-    private MobType mob;
-
-    public MobTypeDatabase(MobUUID uuid, MobType mob) {
-        this.uuid = uuid;
-        this.mob = mob;
-    }
-
-    public MobTypeDatabase() {
-    }
-
     public static void load() {
-        File file = ModuleSpawning.get().getFile("MobTypes");
-        AppleAJDTyped<MobTypeDatabase> manager = AppleAJD.createTyped(MobTypeDatabase.class, file, FileIOServiceNow.taskCreator());
-        GsonBuilderDynamic gson = GsonSerializeMC.completeGsonDynamicMC();
-        manager.setSerializingJson(gson.create());
-        for (MobTypeDatabase database : manager.loadFolderNow()) {
-            mobs.put(database.uuid, database.mob);
-            nameToMob.put(database.mob.getName(), database.uuid);
-            database.mob.init();
+        File folder = ModuleBase.get().getFile("MobTypes");
+        AppleAJDTyped<MobType> manager = AppleAJD.createTyped(MobType.class, folder, FileIOServiceNow.taskCreator(), gson());
+
+        for (MobType mob : manager.loadFolderNow()) {
+            mobs.put(mob.getId(), mob);
+            nameToMob.put(mob.getName(), mob.getId());
         }
+    }
+
+    @NotNull
+    private static Gson gson() {
+        GsonBuilderDynamic gson = GsonSerializeMC.completeGsonDynamicMC();
+        return MobType.gson(gson).create();
     }
 
     public static MobType getMobType(MobUUID uuid) {
@@ -58,16 +54,37 @@ public class MobTypeDatabase implements HasFilename {
     @Nullable
     public static MobUUID getMobUUID(Entity entity) {
         for (String tag : entity.getScoreboardTags()) {
-            if (tag.startsWith(MOB_TYPE_PREFIX)) {
-                String mobName = tag.substring(MOB_TYPE_PREFIX.length());
-                return getMobUUID(mobName);
+            if (tag.startsWith(MOB_TYPE_ID_PREFIX)) {
+                String mobId = tag.substring(MOB_TYPE_ID_PREFIX.length());
+                try {
+                    MobUUID mobUUID = new MobUUID(Integer.parseInt(mobId));
+                    if (mobUUID.mapped() == null) return null;
+                    return mobUUID;
+                } catch (NumberFormatException e) {
+                    return null;
+                }
             }
         }
         return null;
     }
 
-    @Override
-    public String getSaveFileName() {
-        return this.uuid.getId() + ".json";
+    public static void init() {
+        mobs.values().forEach(MobType::init);
+    }
+
+    public static List<SpawnSelectorGrouping> listSelectors() {
+        return mobs.values().stream()
+            .map(MobType::getSpawnerTags)
+            .toList();
+    }
+
+
+    public static void tagMob(Entity entity, MobType mobType) {
+        MobUUID mobId = mobType.getId();
+        entity.getScoreboardTags().stream()
+            .filter(tag -> tag.startsWith(MOB_TYPE_NAME_PREFIX) || tag.startsWith(MOB_TYPE_ID_PREFIX))
+            .forEach(entity::removeScoreboardTag);
+        entity.addScoreboardTag(MOB_TYPE_ID_PREFIX + mobId.getId());
+        entity.addScoreboardTag(MOB_TYPE_NAME_PREFIX + mobType.getName());
     }
 }

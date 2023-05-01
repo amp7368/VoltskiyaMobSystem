@@ -1,19 +1,17 @@
 package voltskiya.mob.system.spawn.task;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 import voltskiya.mob.system.VoltskiyaPlugin;
 
 public class WorldRegenDaemon {
 
+    private static final int MAX_SIZE = 5;
     private static WorldRegenDaemon instance;
-    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, run -> {
-        Thread thread = new Thread(run);
-        thread.setPriority(Thread.MIN_PRIORITY);
-        return thread;
-    });
+    private final ExecutorService service = Executors.newFixedThreadPool(5);
+    private int serviceSize = 0;
     private BukkitTask runningScheduler;
 
     public WorldRegenDaemon() {
@@ -25,7 +23,23 @@ public class WorldRegenDaemon {
     }
 
     private void scheduleTask() {
-        service.submit(new WorldRegenTask()::run);
+        if (this.incrementTask())
+            service.submit(new WorldRegenTask(this::decrementTask));
+    }
+
+    private void decrementTask() {
+        synchronized (service) {
+            serviceSize--;
+        }
+    }
+
+    private boolean incrementTask() {
+        synchronized (service) {
+            if (serviceSize >= MAX_SIZE)
+                return false;
+            serviceSize++;
+            return true;
+        }
     }
 
 
