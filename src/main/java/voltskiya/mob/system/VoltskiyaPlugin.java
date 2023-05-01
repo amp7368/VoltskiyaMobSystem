@@ -7,6 +7,7 @@ import java.util.List;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.player.ModulePlayer;
 import voltskiya.mob.system.spawn.ModuleSpawning;
+import voltskiya.mob.system.storage.ModuleStorage;
 import voltskiya.mob.system.temperature.ModuleTemperature;
 
 public class VoltskiyaPlugin extends AbstractVoltPlugin {
@@ -24,6 +25,6 @@ public class VoltskiyaPlugin extends AbstractVoltPlugin {
 
     @Override
     public List<AbstractModule> getModules() {
-        return List.of(new ModuleBase(), new ModuleSpawning(),new ModulePlayer(), new ModuleTemperature());
+        return List.of(new ModuleStorage(), new ModuleBase(), new ModuleSpawning(), new ModulePlayer(), new ModuleTemperature());
     }
 }

@@ -2,20 +2,24 @@ package voltskiya.mob.system.base.spawner.context;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import voltskiya.mob.system.base.biome.BiomeTypeDatabase;
+import org.jetbrains.annotations.NotNull;
+import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeUUID;
 import voltskiya.mob.system.base.spawner.rule.temporal.TimeOfDay;
-import voltskiya.mob.system.base.storage.mob.StoredMob;
+import voltskiya.mob.system.storage.mob.DStoredMob;
 
-public record SpawningContext(Location location, BiomeUUID biomeUUID, Block feetBlock,
-                              Block belowFeetBlock) {
+public record SpawningContext(Location location, BiomeUUID biomeUUID, Block feetBlock, Block belowFeetBlock) {
 
 
-    public static SpawningContext create(StoredMob storedMob) {
-        Location location = storedMob.getLocation();
+    public static SpawningContext create(DStoredMob storedMob) {
+        return create(storedMob.getLocation());
+    }
+
+    @NotNull
+    public static SpawningContext create(Location location) {
         Block feetBlock = location.getBlock();
         Block belowFeetBlock = location.clone().subtract(0, 1, 0).getBlock();
-        BiomeUUID biomeUUID = BiomeTypeDatabase.getBiomeUUID(feetBlock.getBiome().getKey());
+        BiomeUUID biomeUUID = BiomeDatabases.getBiome(feetBlock.getBiome().getKey());
         return new SpawningContext(location, biomeUUID, feetBlock, belowFeetBlock);
     }
 

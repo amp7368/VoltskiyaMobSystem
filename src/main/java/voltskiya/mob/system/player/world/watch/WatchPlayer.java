@@ -24,7 +24,7 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
 
     public static void load() {
         Bukkit.getScheduler()
-            .scheduleSyncRepeatingTask(VoltskiyaPlugin.get(), WatchPlayer::tickAll, 1, 1);
+            .scheduleSyncRepeatingTask(VoltskiyaPlugin.get(), WatchPlayer::tickAll, 1, 10 * 20);
         for (Player player : Bukkit.getOnlinePlayers()) {
             putIfAbsent(player);
         }
@@ -38,14 +38,6 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
         watchPlayers.forEach(WatchPlayer::tick);
     }
 
-    private void tick() {
-        if (!player.isOnline()) {
-            remove(player);
-            return;
-        }
-        tickWatchPlayer();
-    }
-
     private static void remove(Player player) {
         synchronized (watches) {
             watches.remove(player.getUniqueId());
@@ -56,6 +48,14 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
         synchronized (watches) {
             watches.computeIfAbsent(player.getUniqueId(), (key) -> new WatchPlayer(player));
         }
+    }
+
+    private void tick() {
+        if (!player.isOnline()) {
+            remove(player);
+            return;
+        }
+        tickWatchPlayer();
     }
 
     @Override

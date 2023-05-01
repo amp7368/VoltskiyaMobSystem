@@ -4,14 +4,15 @@ import apple.mc.utilities.item.material.MaterialUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
+import voltskiya.mob.system.base.spawner.rule.generic.GsonMapSpawningRule;
 import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 
 public class FlyingRules extends SpawningRule {
 
-    private int spawnAboveGroundHeight;
+    protected int spawnAboveGroundHeight = 0;
 
-    public void merge(FlyingRules overrideWith) {
-        this.spawnAboveGroundHeight = overrideWith.spawnAboveGroundHeight;
+    public FlyingRules() {
+        super(GsonMapSpawningRule.FLYING.getTypeId());
     }
 
     @Override

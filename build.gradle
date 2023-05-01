@@ -3,7 +3,7 @@ plugins {
     id 'java'
 //    id "io.github.patrick.remapper" version "1.3.0"
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-    id "io.ebean" version "13.10.1"
+    id "io.ebean" version "13.14.0"
 }
 
 repositories {
@@ -17,15 +17,10 @@ repositories {
         url 'https://repo.codemc.org/repository/maven-public/'
     }
 }
-idea {
-    module {
-        sourceDirs += file("$projectDir/build/classes/java/main")
-        generatedSourceDirs += file("$projectDir/build/classes/java/main")
-    }
-}
+
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(18))
     }
 }
 
@@ -33,36 +28,53 @@ project.group groupValue
 project.version versionValue
 
 configurations {
-    all {
+    configureEach {
         resolutionStrategy.cacheDynamicVersionsFor 1, 'seconds'
         resolutionStrategy.cacheChangingModulesFor 1, 'seconds'
     }
 }
 
-project.ext.ebean_version = '13.10.1'
+project.ext.ebean_version = '13.14.1'
+// https://search.maven.org/search?q=g:io.ebean
 dependencies {
-    annotationProcessor 'io.ebean:ebean-annotation:8.3'
+    // sql
     annotationProcessor "io.ebean:ebean-querybean:${ebean_version}"
-    annotationProcessor 'io.ebean:persistence-api:3.0'
     annotationProcessor "io.ebean:querybean-generator:${ebean_version}"
+    implementation "io.ebean:ebean-querybean:${ebean_version}"
+    implementation "io.ebean:ebean-mysql:${ebean_version}"
+    // sql driver
 
-    compileOnly 'mc.pmc:VoltPluginManager:3.2-SNAPSHOT'
+    // migration
+    implementation "io.ebean:ebean-ddl-generator:${ebean_version}"
+    implementation 'io.ebean:ebean-migration:13.7.0'
+    testImplementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+
+    //json
+    implementation "io.ebean:ebean-jackson-mapper:${ebean_version}"
+    implementation "io.ebean:ebean-jackson-jsonnode:${ebean_version}"
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
+    // volt
+    compileOnly 'mc.pmc:voltpluginmanager:3.2-SNAPSHOT'
     compileOnly 'mc.apple:AppleMCUtil:1.0-SNAPSHOT'
     compileOnly 'mc.nms:DecodingNms:1.19.2-2.0-SNAPSHOT'
     compileOnly 'voltskiya.utilities:VoltskiyaUtilities:2.0-SNAPSHOT'
     compileOnly 'voltskiya.mob:VoltskiyaMobManager:2.0-SNAPSHOT'
 
-//    compileOnly 'org.spigotmc:spigot:1.19.2-R0.1-SNAPSHOT:remapped-mojang'
+    // web
+    compileOnly 'voltskiya.web:VoltskiyaWebserver:1.0-SNAPSHOT'
+    compileOnly 'io.javalin:javalin:5.2.0'
+
+    // minecraft api
+    compileOnly 'org.spigotmc:spigot:1.19.2-R0.1-SNAPSHOT:remapped-mojang'
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
+
+    // minecraft libraries
     compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
-
-    implementation 'mysql:mysql-connector-java:8.0.30'
-    implementation 'org.avaje.composite:logback:1.1'
-
-    implementation 'io.ebean:ebean-annotation:8.3'
-    implementation "io.ebean:ebean-ddl-generator:${ebean_version}"
-    implementation "io.ebean:ebean-querybean:${ebean_version}"
-    implementation "io.ebean:ebean-mysql:${ebean_version}"
+    compileOnly 'de.tr7zw:item-nbt-api-plugin:2.11.2'
 }
 ebean {
     debugLevel = 0 //0 - 9
@@ -79,11 +91,21 @@ shadowJar.classifier ''
 //        }
 //    }
 //}
+shadowJar.classifier ''
 shadowJar {
+    manifest {
+        attributes 'Multi-Release': true
+    }
+    mergeServiceFiles()
+    relocate 'io.ebean', 'com.voltskiya.io.ebean'
+    relocate 'io.ebeaninternal', 'com.voltskiya.io.ebean'
+    relocate 'io.ebeanservice', 'com.voltskiya.io.ebean'
+    outputs.upToDateWhen { false }
     doLast {
         copy {
-            from jar.getArchiveFile()
+            from shadowJar.getArchiveFile()
             into file(serverBuildDir)
         }
     }
 }
+

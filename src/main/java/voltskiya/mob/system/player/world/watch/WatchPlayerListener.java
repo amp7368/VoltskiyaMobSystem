@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.VoltskiyaPlugin;
 import voltskiya.mob.system.base.mob.MobTypeDatabase;
 import voltskiya.mob.system.base.mob.MobUUID;
-import voltskiya.mob.system.base.storage.mob.MobStorage;
-import voltskiya.mob.system.base.storage.mob.StoredMob;
+import voltskiya.mob.system.storage.mob.DStoredMob;
+import voltskiya.mob.system.storage.mob.MobStorage;
 
 public class WatchPlayerListener implements Listener {
 
@@ -29,10 +29,10 @@ public class WatchPlayerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
         @NotNull Entity[] entities = event.getChunk().getEntities();
-        List<StoredMob> mobsToUnload = new ArrayList<>();
+        List<DStoredMob> mobsToUnload = new ArrayList<>();
         for (Entity entity : entities) {
-            @Nullable MobUUID mobType = MobTypeDatabase.get().getMobUUID(entity);
-            mobsToUnload.add(new StoredMob(mobType, entity.getLocation()));
+            @Nullable MobUUID mobType = MobTypeDatabase.getMobUUID(entity);
+            mobsToUnload.add(new DStoredMob(mobType, entity.getLocation()));
         }
         MobStorage.insertMobs(mobsToUnload);
     }

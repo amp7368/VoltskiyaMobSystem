@@ -8,9 +8,13 @@ import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 
 public abstract class BlockRules extends SpawningRule {
 
-    private final Set<Material> blocks = new HashSet<>();
+    protected Set<Material> blocks = new HashSet<>();
 
-    public boolean isBlockContained(SpawningContext context) {
+    public BlockRules(String typeId) {
+        super(typeId);
+    }
+
+    protected boolean isBlockContained(SpawningContext context) {
         Material belowFeet = context.belowFeetBlock().getType();
         return blocks.contains(belowFeet);
     }

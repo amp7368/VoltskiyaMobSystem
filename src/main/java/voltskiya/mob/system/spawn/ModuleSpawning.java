@@ -3,7 +3,12 @@ package voltskiya.mob.system.spawn;
 import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.factory.AppleConfigLike;
 import java.util.List;
-import voltskiya.mob.system.player.world.watch.WatchPlayerConfig;
+import org.bukkit.Bukkit;
+import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.spawn.config.RegenConfig;
+import voltskiya.mob.system.spawn.config.RegenStatsMap;
+import voltskiya.mob.system.spawn.task.WorldRegenDaemon;
+import voltskiya.mob.system.storage.world.WorldAdapter;
 
 public class ModuleSpawning extends AbstractModule {
 
@@ -18,12 +23,30 @@ public class ModuleSpawning extends AbstractModule {
     }
 
     @Override
+    public void init() {
+        WorldAdapter.load();
+    }
+
+    @Override
     public void enable() {
+        RegenConfig.load();
+        Bukkit.getScheduler().runTaskAsynchronously(VoltskiyaPlugin.get(), this::enableAsync);
+    }
+
+    private void enableAsync() {
+        RegenStatsMap.load();
+        new WorldRegenDaemon().start();
+        new OnlinePlayersListener();
+    }
+
+    @Override
+    public void onDisable() {
+        WorldRegenDaemon.get().stop();
     }
 
     @Override
     public List<AppleConfigLike> getConfigs() {
-        return List.of(configJson(WatchPlayerConfig.class, "WatchPlayerConfig"));
+        return List.of();
     }
 
     @Override

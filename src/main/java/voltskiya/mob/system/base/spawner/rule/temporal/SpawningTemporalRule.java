@@ -4,5 +4,11 @@ import voltskiya.mob.system.base.spawner.context.SpawningContext;
 
 public abstract class SpawningTemporalRule {
 
+    private String typeId;
+
+    public SpawningTemporalRule(String typeId) {
+        this.typeId = typeId;
+    }
+
     public abstract long spawnDelay(SpawningContext context);
 }

@@ -1,18 +1,30 @@
 package voltskiya.mob.system.base.biome;
 
 import java.util.UUID;
+import voltskiya.mob.system.base.util.UUIDWrapper;
+import voltskiya.mob.system.base.util.UUIDWrapperTypeAdapter;
 
-public class BiomeUUID {
+public class BiomeUUID extends UUIDWrapper<UUID, BiomeType> {
 
-    public UUID uuid = UUID.randomUUID();
+    public BiomeUUID(UUID uuid) {
+        super(uuid);
+    }
 
-    @Override
-    public int hashCode() {
-        return uuid.hashCode();
+    public static BiomeUUID random() {
+        return new BiomeUUID(UUID.randomUUID());
+    }
+
+    public static UUIDWrapperTypeAdapter<UUID, BiomeUUID> typeAdapter() {
+        return new UUIDWrapperTypeAdapter<>(BiomeUUID::new, UUID.class);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof BiomeUUID other && other.uuid.equals(this.uuid);
+    public boolean isInstanceOf(Object obj) {
+        return obj instanceof BiomeUUID;
+    }
+
+    @Override
+    public BiomeType mapped() {
+        return BiomeDatabases.getBiomeType().get(this);
     }
 }

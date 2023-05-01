@@ -1,13 +1,18 @@
 package voltskiya.mob.system.base.spawner.rule.generic.elevation;
 
 import apple.utilities.util.NumberUtils;
-import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
+import voltskiya.mob.system.base.spawner.rule.generic.GsonMapSpawningRule;
+import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 
 public class ElevationRules extends SpawningRule {
 
-    private int minElevation;
-    private int maxElevation;
+    private int minElevation = Integer.MIN_VALUE;
+    private int maxElevation = Integer.MAX_VALUE;
+
+    public ElevationRules() {
+        super(GsonMapSpawningRule.ELEVATION.getTypeId());
+    }
 
     public void merge(ElevationRules overrideWith) {
         this.minElevation = overrideWith.minElevation;
