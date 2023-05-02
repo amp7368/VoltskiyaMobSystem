@@ -123,7 +123,10 @@ public class MapRegenConfig {
                 boolean hitAir = false;
                 for (byte yi = 0; yi < RANDOM_LOCATION_DIAMETER; yi++) {
                     Material material = block.getBlock().getType();
-                    if (MaterialUtils.isWalkThroughable(material)) {
+                    if (MaterialUtils.isTree(material)) {
+                        // find air again
+                        hitAir = false;
+                    } else if (MaterialUtils.isWalkThroughable(material)) {
                         hitAir = true;
                     } else if (!hitAir) {
                         return block.add(0, 1, 0);

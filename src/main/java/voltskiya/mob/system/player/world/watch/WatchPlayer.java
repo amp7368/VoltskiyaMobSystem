@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import voltskiya.mob.system.VoltskiyaPlugin;
 
@@ -50,12 +51,18 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
         }
     }
 
+    private static boolean shouldTick(Player player) {
+        GameMode gameMode = player.getGameMode();
+        return gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE;
+    }
+
     private void tick() {
         if (!player.isOnline()) {
             remove(player);
             return;
         }
-        tickWatchPlayer();
+        if (shouldTick(player))
+            tickWatchPlayer();
     }
 
     @Override
