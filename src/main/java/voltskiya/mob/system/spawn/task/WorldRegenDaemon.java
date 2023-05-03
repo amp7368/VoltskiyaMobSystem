@@ -9,6 +9,7 @@ import voltskiya.mob.system.spawn.config.RegenConfig;
 
 public class WorldRegenDaemon {
 
+    private static final int TASKS_PER_TICK = 5;
     private static WorldRegenDaemon instance;
     private int serviceSize = 0;
     private BukkitTask runningScheduler;
@@ -22,9 +23,12 @@ public class WorldRegenDaemon {
     }
 
     private void scheduleTask() {
-        if (this.incrementTask()) {
-            WorldRegenTask task = new WorldRegenTask(this::decrementTask);
-            VoltTask.cancelingAsyncTask(task).start(ModuleSpawning.get().getTaskManager());
+        for (int i = 0; i < TASKS_PER_TICK; i++) {
+            if (this.incrementTask()) {
+                WorldRegenTask task = new WorldRegenTask(this::decrementTask);
+                VoltTask.cancelingAsyncTask(task)
+                    .start(ModuleSpawning.get().getTaskManager());
+            }
         }
     }
 
@@ -46,6 +50,7 @@ public class WorldRegenDaemon {
 
     public void start() {
         synchronized (this) {
+            ModuleSpawning.stats.start();
             scheduleThisScheduler();
         }
     }
@@ -53,6 +58,7 @@ public class WorldRegenDaemon {
     public void stop() {
         synchronized (this) {
             if (this.runningScheduler != null) {
+                ModuleSpawning.stats.stop();
                 this.runningScheduler.cancel();
                 this.runningScheduler = null;
             }

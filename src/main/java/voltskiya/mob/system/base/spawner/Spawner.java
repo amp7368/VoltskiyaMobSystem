@@ -3,6 +3,7 @@ package voltskiya.mob.system.base.spawner;
 import apple.utilities.json.gson.GsonBuilderDynamic;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Bukkit;
 import voltskiya.mob.system.base.spawner.attribute.GsonMapSpawningAttribute;
 import voltskiya.mob.system.base.spawner.attribute.base.SpawningAttributeModifier;
 import voltskiya.mob.system.base.spawner.attribute.base.SpawningAttributes;
@@ -56,8 +57,7 @@ public class Spawner {
 
     public boolean isBreaksRule(SpawningContext context) {
         for (SpawningRule rule : rules) {
-            if (rule.isBreaksRule(context))
-                return true;
+            if (rule.isBreaksRule(context)) return true;
         }
         return false;
     }
@@ -68,7 +68,7 @@ public class Spawner {
         for (SpawningTemporalRule rule : temporalRules) {
             spawnDelay = Math.max(spawnDelay, rule.spawnDelay(context));
         }
-        return spawnDelay;
+        return Bukkit.getCurrentTick() + spawnDelay;
     }
 
     public void prepareModifiers(SpawningContext context, SpawnerSummonResult result) {

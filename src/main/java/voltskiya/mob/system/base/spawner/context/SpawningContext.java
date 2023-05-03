@@ -8,7 +8,19 @@ import voltskiya.mob.system.base.biome.BiomeUUID;
 import voltskiya.mob.system.base.spawner.rule.temporal.TimeOfDay;
 import voltskiya.mob.system.storage.mob.DStoredMob;
 
-public record SpawningContext(Location location, BiomeUUID biomeUUID, Block feetBlock, Block belowFeetBlock) {
+public final class SpawningContext {
+
+    private final BiomeUUID biomeUUID;
+    private final Block feetBlock;
+    private final Block belowFeetBlock;
+    private Location location;
+
+    public SpawningContext(Location location, BiomeUUID biomeUUID, Block feetBlock, Block belowFeetBlock) {
+        this.location = location;
+        this.biomeUUID = biomeUUID;
+        this.feetBlock = feetBlock;
+        this.belowFeetBlock = belowFeetBlock;
+    }
 
 
     public static SpawningContext create(DStoredMob storedMob) {
@@ -31,4 +43,23 @@ public record SpawningContext(Location location, BiomeUUID biomeUUID, Block feet
         return this.location().getWorld().getTime();
     }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Location location() {
+        return location;
+    }
+
+    public BiomeUUID biomeUUID() {
+        return biomeUUID;
+    }
+
+    public Block feetBlock() {
+        return feetBlock;
+    }
+
+    public Block belowFeetBlock() {
+        return belowFeetBlock;
+    }
 }

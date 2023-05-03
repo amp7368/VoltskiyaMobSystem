@@ -18,17 +18,14 @@ public class RegenConfig {
     public int maxThreadPool = 5;
 
     public Map<UUID, MapRegenConfig> maps = new HashMap<>();
-
-    public RegenConfig() {
-        for (World world : Bukkit.getWorlds()) {
-            maps.put(world.getUID(), new MapRegenConfig(world));
-        }
-    }
+    public boolean logMobSpawn = true;
+    public boolean logMobSummon = true;
+    public int logMobCountInterval = 20;
 
     public static void load() {
         File file = ModuleSpawning.get().getFile("WorldRegenConfig.json");
         manager = AppleAJD.createInst(RegenConfig.class, file, FileIOServiceNow.taskCreator());
-        manager.loadOrMake();
+        manager.loadOrMake().init();
     }
 
     public static RegenConfig get() {
@@ -37,5 +34,12 @@ public class RegenConfig {
 
     public static void save() {
         manager.save();
+    }
+
+    public void init() {
+        for (World world : Bukkit.getWorlds()) {
+            maps.putIfAbsent(world.getUID(), new MapRegenConfig(world));
+        }
+        maps.values().forEach(MapRegenConfig::init);
     }
 }

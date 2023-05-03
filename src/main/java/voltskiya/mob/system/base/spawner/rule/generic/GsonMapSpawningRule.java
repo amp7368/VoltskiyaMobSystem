@@ -7,12 +7,16 @@ import voltskiya.mob.system.base.spawner.rule.generic.block.BlockRulesBlacklist;
 import voltskiya.mob.system.base.spawner.rule.generic.block.BlockRulesWhitelist;
 import voltskiya.mob.system.base.spawner.rule.generic.elevation.ElevationRules;
 import voltskiya.mob.system.base.spawner.rule.generic.flying.FlyingRules;
+import voltskiya.mob.system.base.spawner.rule.generic.skylight.SkylightRule;
+import voltskiya.mob.system.base.spawner.rule.generic.water.WaterRule;
 
 public enum GsonMapSpawningRule implements GsonEnumTypeHolder<SpawningRule> {
     BLOCK_BLACKLIST("block_blacklist", BlockRulesBlacklist.class),
     BLOCK_WHITELIST("block_whitelist", BlockRulesWhitelist.class),
     ELEVATION("elevation", ElevationRules.class),
-    FLYING("flying", FlyingRules.class);
+    FLYING("flying", FlyingRules.class),
+    SKYLIGHT("skylight", SkylightRule.class),
+    WATER("water", WaterRule.class);
 
     private final String typeId;
     private final Class<? extends SpawningRule> type;

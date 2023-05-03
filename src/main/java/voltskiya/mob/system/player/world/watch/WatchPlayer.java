@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import voltskiya.mob.system.VoltskiyaPlugin;
 
@@ -15,7 +14,6 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
     private static final Map<UUID, WatchPlayer> watches = new HashMap<>();
 
     private final Player player;
-    private final ThreadPoolExecutor threadPool = new ScheduledThreadPoolExecutor(5);
 
     private WatchPlayer(Player player) {
         this.player = player;
@@ -23,11 +21,10 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
 
 
     public static void load() {
+        VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> Bukkit.getOnlinePlayers().forEach(WatchPlayer::putIfAbsent));
         Bukkit.getScheduler()
             .scheduleSyncRepeatingTask(VoltskiyaPlugin.get(), WatchPlayer::tickAll, 1, 10 * 20);
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            putIfAbsent(player);
-        }
+
     }
 
     private static void tickAll() {
@@ -50,12 +47,18 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
         }
     }
 
+    private static boolean shouldTick(Player player) {
+        GameMode gameMode = player.getGameMode();
+        return gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE;
+    }
+
     private void tick() {
         if (!player.isOnline()) {
             remove(player);
             return;
         }
-        tickWatchPlayer();
+        if (shouldTick(player))
+            tickWatchPlayer();
     }
 
     @Override
@@ -63,8 +66,4 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
         return this.player;
     }
 
-    @Override
-    public ThreadPoolExecutor getThreadPool() {
-        return this.threadPool;
-    }
 }

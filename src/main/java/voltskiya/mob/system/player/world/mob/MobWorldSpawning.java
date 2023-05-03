@@ -2,6 +2,7 @@ package voltskiya.mob.system.player.world.mob;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.VoltskiyaPlugin;
@@ -11,7 +12,7 @@ import voltskiya.mob.system.base.mob.MobType;
 import voltskiya.mob.system.base.selector.ExtendsMob;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
-import voltskiya.mob.system.player.world.watch.WatchPlayerConfig;
+import voltskiya.mob.system.spawn.config.RegenConfig;
 import voltskiya.mob.system.storage.mob.DStoredMob;
 import voltskiya.mob.system.storage.mob.MobStorage;
 
@@ -21,7 +22,7 @@ public class MobWorldSpawning {
         List<DStoredMob> mobsToAddBack = new ArrayList<>();
         for (DStoredMob storedMob : mobs) {
             long spawnDelay = trySpawn(storedMob).getSpawnDelay();
-            if (spawnDelay > 0) {
+            if (spawnDelay > Bukkit.getCurrentTick()) {
                 storedMob.setSpawnDelay(spawnDelay);
                 mobsToAddBack.add(storedMob);
             }
@@ -58,7 +59,7 @@ public class MobWorldSpawning {
     }
 
     private static void logMobSummon(DStoredMob storedMob) {
-        if (!WatchPlayerConfig.get().showSummonMob) return;
+        if (!RegenConfig.get().logMobSummon) return;
         Location loc = storedMob.getLocation();
         String mobName = storedMob.getMobType().getName();
         String worldName = loc.getWorld().getName();

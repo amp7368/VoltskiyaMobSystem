@@ -1,29 +1,39 @@
 package voltskiya.mob.system.base.spawner.rule.temporal;
 
 public enum TimeOfDay {
-    MORNING(),
-    NOON(),
-    EVENING(),
-    MIDNIGHT();
+    MORNING(3000),
+    NOON(9000),
+    EVENING(15000),
+    MIDNIGHT(21000);
     private static TimeOfDay[] times;
+
+    static {
+        getOrderedTimes();
+    }
+
+    private final int earliest;
 
     private int index;
 
+    TimeOfDay(int earliest) {
+        this.earliest = earliest;
+    }
+
     public static TimeOfDay getTime(long time) {
-        time += 6000;
+        time += 24000 + 6000;
         time %= 24000;
-        if (time < 3000 || time >= 21000) {
+        if (time < MORNING.earliest || time >= MIDNIGHT.earliest) {
             return MIDNIGHT;
-        } else if (time < 9000) {
+        } else if (time < NOON.earliest) {
             return MORNING;
-        } else if (time < 15000) {
+        } else if (time < EVENING.earliest) {
             return NOON;
         } else {
             return EVENING;
         }
     }
 
-    private synchronized static TimeOfDay[] getOrderedTimes() {
+    private static TimeOfDay[] getOrderedTimes() {
         if (times != null)
             return times;
         times = values();
@@ -40,6 +50,7 @@ public enum TimeOfDay {
     }
 
     public long timeUntil(long time) {
-        return 0; //todo
+        // add a day to verify positive
+        return (this.earliest - time + 24000) % 24000;
     }
 }

@@ -12,6 +12,7 @@ import voltskiya.mob.system.storage.world.WorldAdapter;
 
 public class ModuleSpawning extends AbstractModule {
 
+    public static SpawningStats stats = new SpawningStats();
     private static ModuleSpawning instance;
 
     public ModuleSpawning() {
@@ -35,7 +36,7 @@ public class ModuleSpawning extends AbstractModule {
 
     private void enableAsync() {
         RegenStatsMap.load();
-        new WorldRegenDaemon().start();
+        new WorldRegenDaemon();
         new OnlinePlayersListener();
     }
 
