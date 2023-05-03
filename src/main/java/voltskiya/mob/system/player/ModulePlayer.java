@@ -9,6 +9,16 @@ import voltskiya.mob.system.player.world.watch.WatchPlayerListener;
 
 public class ModulePlayer extends AbstractModule {
 
+    private static ModulePlayer instance;
+
+    public ModulePlayer() {
+        instance = this;
+    }
+
+    public static ModulePlayer get() {
+        return instance;
+    }
+
     @Override
     public void enable() {
         new WatchPlayerListener();

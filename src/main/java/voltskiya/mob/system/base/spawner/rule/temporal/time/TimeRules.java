@@ -23,12 +23,12 @@ public class TimeRules extends SpawningTemporalRule {
 
     @Override
     public long spawnDelay(SpawningContext context) {
-        TimeOfDay original = context.timeOfDay();
-        boolean allowNow = this.allowedTimes.get(original);
+        TimeOfDay now = context.timeOfDay();
+        boolean allowNow = this.allowedTimes.get(now);
         if (allowNow)
             return 0;
-        for (TimeOfDay time = original.next(); time != original; time = time.next()) {
-            Boolean allow = this.allowedTimes.get(original);
+        for (TimeOfDay time = now.next(); time != now; time = time.next()) {
+            Boolean allow = this.allowedTimes.get(now);
             if (allow)
                 return time.timeUntil(context.time());
         }

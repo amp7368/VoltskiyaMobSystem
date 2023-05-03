@@ -2,6 +2,7 @@ package voltskiya.mob.system.player.world.mob;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.VoltskiyaPlugin;
@@ -21,7 +22,7 @@ public class MobWorldSpawning {
         List<DStoredMob> mobsToAddBack = new ArrayList<>();
         for (DStoredMob storedMob : mobs) {
             long spawnDelay = trySpawn(storedMob).getSpawnDelay();
-            if (spawnDelay > 0) {
+            if (spawnDelay > Bukkit.getCurrentTick()) {
                 storedMob.setSpawnDelay(spawnDelay);
                 mobsToAddBack.add(storedMob);
             }

@@ -24,6 +24,6 @@ public class WaterRule extends SpawningRule {
     @Override
     public boolean isBreaksRule(SpawningContext context) {
         boolean isInWater = isInWater(context.location().getBlock());
-        return allow.isOnlyWater() == isInWater;
+        return allow.isOnlyWater() != isInWater;
     }
 }

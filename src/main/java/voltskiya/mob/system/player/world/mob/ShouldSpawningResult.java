@@ -1,5 +1,7 @@
 package voltskiya.mob.system.player.world.mob;
 
+import org.bukkit.Bukkit;
+
 public class ShouldSpawningResult {
 
     public static final ShouldSpawningResult SHOULD_REMOVE = new ShouldSpawningResult(true);
@@ -22,7 +24,7 @@ public class ShouldSpawningResult {
     }
 
     public boolean shouldSpawn() {
-        return canFutureSpawn() && spawnDelay == 0;
+        return canFutureSpawn() && spawnDelay <= Bukkit.getCurrentTick();
     }
 
     public boolean canFutureSpawn() {

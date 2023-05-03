@@ -35,7 +35,7 @@ public class ModuleSpawning extends AbstractModule {
 
     private void enableAsync() {
         RegenStatsMap.load();
-        new WorldRegenDaemon().start();
+        new WorldRegenDaemon();
         new OnlinePlayersListener();
     }
 

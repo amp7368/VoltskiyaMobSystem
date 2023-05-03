@@ -15,6 +15,6 @@ public class SkylightRule extends SpawningRule {
     @Override
     public boolean isBreaksRule(SpawningContext context) {
         boolean isSurface = context.location().getBlock().getLightFromSky() > 0;
-        return allow.isOnlySurface() == isSurface;
+        return allow.isOnlySurface() != isSurface;
     }
 }

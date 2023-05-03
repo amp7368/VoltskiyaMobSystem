@@ -1,9 +1,10 @@
 package voltskiya.mob.system.storage.mob;
 
 import io.ebean.DB;
-import io.ebean.Model;
 import io.ebean.Transaction;
 import java.util.List;
+import javax.persistence.EntityNotFoundException;
+import org.bukkit.Bukkit;
 import voltskiya.mob.system.player.world.mob.MobWorldSpawning;
 import voltskiya.mob.system.storage.mob.query.QDStoredMob;
 
@@ -23,13 +24,19 @@ public class MobStorage {
         return new QDStoredMob()
             .where().and()
             .location.world.eq(region.getWorldId())
-            .spawnDelay.eq(0)
+            .spawnDelay.lt(Bukkit.getCurrentTick())
             .location.x.between(region.getLowerX(), region.getUpperX())
             .location.z.between(region.getLowerZ(), region.getUpperZ());
     }
 
     public static void insertMobs(List<DStoredMob> mobsToAddBack) {
-        mobsToAddBack.forEach(Model::save);
+        mobsToAddBack.forEach(mob -> {
+            try {
+                mob.save();
+            } catch (EntityNotFoundException e) {
+                mob.insert();
+            }
+        });
     }
 
     public static int countMobs(short worldId) {

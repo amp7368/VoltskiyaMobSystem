@@ -37,7 +37,6 @@ public class ModuleBase extends AbstractModule {
         SpawnSelectorDatabase.load();
         BiomeDatabases.load();
         MobTypeDatabase.load();
-
         initSpawnerTags();
         MobTypeDatabase.init();
 

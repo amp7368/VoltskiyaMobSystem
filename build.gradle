@@ -1,7 +1,7 @@
 plugins {
     id 'idea'
     id 'java'
-//    id "io.github.patrick.remapper" version "1.3.0"
+    id "io.github.patrick.remapper" version "1.3.0"
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "io.ebean" version "13.14.0"
 }
@@ -81,7 +81,6 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
 
     // minecraft libraries
-    compileOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
     compileOnly 'de.tr7zw:item-nbt-api-plugin:2.11.2'
 }
 
@@ -90,16 +89,16 @@ ebean {
 }
 shadowJar.classifier ''
 
-//remap {
-//    dependsOn(shadowJar)
-//    version.set '1.19.2'
-//    doLast {
-//        copy {
-//            from jar.getArchiveFile()
-//            into file(serverBuildDir)
-//        }
-//    }
-//}
+remap {
+    dependsOn(shadowJar)
+    version.set '1.19.2'
+    doLast {
+        copy {
+            from jar.getArchiveFile()
+            into file(serverBuildDir)
+        }
+    }
+}
 shadowJar.classifier ''
 shadowJar {
     manifest {

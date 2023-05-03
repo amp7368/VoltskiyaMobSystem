@@ -128,8 +128,8 @@ public class MapRegenConfig {
                         hitAir = false;
                     } else if (MaterialUtils.isWalkThroughable(material)) {
                         hitAir = true;
-                    } else if (!hitAir) {
-                        return block.add(0, 1, 0);
+                    } else if (hitAir) {
+                        return block.add(.5, 1, .5);
                     }
                     block.subtract(0, 1, 0);
                 }

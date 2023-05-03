@@ -2,8 +2,10 @@ package voltskiya.mob.system.spawn.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.bukkit.Location;
 import org.bukkit.block.Biome;
+import org.bukkit.entity.EntityType;
 import voltskiya.apple.utilities.chance.weight.ChanceWeightedChoice;
 import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeType;
@@ -15,6 +17,7 @@ import voltskiya.mob.system.player.world.mob.ShouldSpawningResult;
 import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.spawn.config.MapRegenConfig;
 import voltskiya.mob.system.spawn.config.RegenStatsMap;
+import voltskiya.mob.system.spawn.util.CollisionRule;
 import voltskiya.mob.system.storage.mob.DStoredMob;
 import voltskiya.mob.system.storage.mob.MobStorage;
 
@@ -46,14 +49,36 @@ public class WorldRegenTask implements Runnable {
     private void doTask() {
         MobTypeSpawnerInBiome mobToTry = chooseMobToTry();
         if (mobToTry == null) return;
+
         SpawningContext spawnContext = SpawningContext.create(locationToTry);
         ShouldSpawningResult shouldSpawn = mobToTry.spawner().shouldSpawn(spawnContext);
         if (!shouldSpawn.canFutureSpawn()) return;
 
+        this.globalRules(mobToTry.mob().getEntity().getEntityType(), spawnContext);
+        if (isDone()) return;
         DStoredMob spawnedMob = new DStoredMob(mobToTry.mob().getId(), locationToTry);
         spawnedMob.setSpawnDelay(shouldSpawn.getSpawnDelay());
         logMobSpawn(spawnedMob);
         MobStorage.insertMobs(List.of(spawnedMob));
+    }
+
+    private void globalRules(EntityType bukkitType, SpawningContext spawnContext) {
+        if (bukkitType == null) {
+            setDone();
+            return;
+        }
+        Optional<net.minecraft.world.entity.EntityType<?>> type = net.minecraft.world.entity.EntityType.byString(
+            bukkitType.getKey().asString());
+        if (type.isEmpty()) {
+            setDone();
+            return;
+        }
+        Location validLocation = CollisionRule.calculateValidSpawn(type.get(), spawnContext.location());
+        if (validLocation == null) {
+            setDone();
+            return;
+        }
+        spawnContext.setLocation(validLocation);
     }
 
     private void logMobSpawn(DStoredMob spawnedMob) {
@@ -63,10 +88,6 @@ public class WorldRegenTask implements Runnable {
         String message = String.format("create mob %s at %s %d %d %d", mobName, worldName, loc.getBlockX(), loc.getBlockY(),
             loc.getBlockZ());
         ModuleSpawning.get().logger().info(message);
-    }
-
-    private void choosePreciseLocation(BuiltSpawner spawner) {
-
     }
 
     public MobTypeSpawnerInBiome chooseMobToTry() {
@@ -79,13 +100,14 @@ public class WorldRegenTask implements Runnable {
         checkBiomeSpawnerFails();
         if (isDone()) return null;
         List<ExtendsMob> mobsInBiome = biomeSpawner.getExtendsMob();
+        if (mobsInBiome.isEmpty()) return null;
+
         List<MobTypeSpawnerInBiome> spawners = new ArrayList<>();
         for (ExtendsMob extendsMob : mobsInBiome) {
             MobTypeSpawnerInBiome mobSpawner = extendsMob.mob.mapped().getBiomeSpawner(extendsMob, biomeSpawner);
 
             spawners.add(mobSpawner);
         }
-        if (spawners.isEmpty()) return null;
         return this.random.choose(spawners);
     }
 
