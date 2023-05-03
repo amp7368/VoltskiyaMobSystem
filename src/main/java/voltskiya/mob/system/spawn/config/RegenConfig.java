@@ -18,6 +18,9 @@ public class RegenConfig {
     public int maxThreadPool = 5;
 
     public Map<UUID, MapRegenConfig> maps = new HashMap<>();
+    public boolean logMobSpawn = true;
+    public boolean logMobSummon = true;
+    public int logMobCountInterval = 20;
 
     public static void load() {
         File file = ModuleSpawning.get().getFile("WorldRegenConfig.json");

@@ -1,4 +1,7 @@
-package voltskiya.mob.system.spawn.task;
+package voltskiya.mob.system.spawn.timings;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class TimingsElement {
 
@@ -10,6 +13,12 @@ public class TimingsElement {
 
     public TimingsElement(String name) {
         this.name = name;
+    }
+
+    public static String report(TimingsElement[] timings) {
+        return "Timings Report [\n" + Arrays.stream(timings)
+            .map(TimingsElement::toString)
+            .collect(Collectors.joining("\n")) + "]";
     }
 
     public void mark() {
@@ -27,6 +36,6 @@ public class TimingsElement {
 
     @Override
     public String toString() {
-        return "{%-20s=%d}".formatted(name, duration);
+        return "{ %-20s = %d }".formatted(name, duration / 1000);
     }
 }

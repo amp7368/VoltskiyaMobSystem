@@ -19,6 +19,7 @@ import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.player.world.mob.ShouldSpawningResult;
 import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.spawn.config.MapRegenConfig;
+import voltskiya.mob.system.spawn.config.RegenConfig;
 import voltskiya.mob.system.spawn.config.RegenStatsMap;
 import voltskiya.mob.system.spawn.util.CollisionRule;
 import voltskiya.mob.system.storage.mob.DStoredMob;
@@ -78,7 +79,7 @@ public class WorldRegenTask implements Runnable {
         task.start(ModuleSpawning.get().getTaskManager());
         timings.insertMob();
 
-        ModuleSpawning.get().logger().info(timings.toString());
+//        timings.report();
     }
 
     private void globalRules(EntityType bukkitType, SpawningContext spawnContext) {
@@ -101,6 +102,8 @@ public class WorldRegenTask implements Runnable {
     }
 
     private void logMobSpawn(DStoredMob spawnedMob) {
+        if (!RegenConfig.get().logMobSpawn) return;
+        ModuleSpawning.stats.createMob();
         Location loc = spawnedMob.getLocation();
         String mobName = spawnedMob.getMobType().getName();
         String worldName = loc.getWorld().getName();
@@ -158,7 +161,7 @@ public class WorldRegenTask implements Runnable {
 
     private void chooseLocation() {
         MapRegenConfig map = RegenStatsMap.chooseMap();
-        locationToTry = map.randomGroundLocation();
+        locationToTry = map.randomGroundLocation(timings);
         if (locationToTry == null) setDone();
     }
 

@@ -7,25 +7,17 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.spawn.task.WorldRegenTimings;
 import voltskiya.mob.system.storage.world.WorldAdapter;
 import voltskiya.mob.system.storage.world.WorldUUID;
 
 public class MapRegenConfig {
 
 
-    private static final byte RANDOM_LOCATION_HEIGHT = 20;
-    private static final Vector RANDOM_LOCATION_RADIUS_VECTOR;
-
-    static {
-        int radius = RANDOM_LOCATION_HEIGHT / 2;
-        RANDOM_LOCATION_RADIUS_VECTOR = new Vector(radius, radius, radius);
-    }
-
+    private static final byte RANDOM_LOCATION_HEIGHT = 100;
     private transient final Random random = new Random();
     public UUID world;
     public String worldName;
@@ -119,29 +111,32 @@ public class MapRegenConfig {
         return new Location(bukkit, x, y, z);
     }
 
-    public Location randomGroundLocation() {
+    public Location randomGroundLocation(WorldRegenTimings timings) {
         Location center = randomLocation();
         if (center == null) return null;
-        Chunk chunk = center.getChunk();
-        center.setY(Math.max(yMinStarting, center.getBlockY()));
+        timings.chunkLoad();
+        @NotNull Chunk chunk = getWorld().getBukkit().getChunkAt(center);
+        timings.chunkLoad();
 
+        timings.chunkScan();
         for (byte xi = 0; xi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; xi++) {
             for (byte zi = 0; zi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; zi++) {
                 boolean hitAir = false;
-                for (int y = center.getBlockY(), max = y - RANDOM_LOCATION_HEIGHT; y > max; y--) {
-                    @NotNull Block block = chunk.getBlock(xi, y, zi);
-                    Material material = block.getType();
+                for (int y = center.getBlockY(), max = Math.max(yMin, y - RANDOM_LOCATION_HEIGHT); y > max; y--) {
+                    @NotNull Material material = chunk.getBlock(xi, y, zi).getType();
                     if (MaterialUtils.isTree(material)) {
                         // find air again
                         hitAir = false;
                     } else if (MaterialUtils.isWalkThroughable(material)) {
                         hitAir = true;
                     } else if (hitAir) {
-                        return block.getLocation().add(.5, 1, .5);
+                        center.setY(y);
+                        return center.add(.5 + xi, 1, .5 + zi);
                     }
                 }
             }
         }
+        timings.chunkScan();
         return null;
     }
 }

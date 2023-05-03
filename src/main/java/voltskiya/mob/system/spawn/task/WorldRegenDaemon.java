@@ -26,7 +26,8 @@ public class WorldRegenDaemon {
         for (int i = 0; i < TASKS_PER_TICK; i++) {
             if (this.incrementTask()) {
                 WorldRegenTask task = new WorldRegenTask(this::decrementTask);
-                VoltTask.cancelingAsyncTask(task).start(ModuleSpawning.get().getTaskManager());
+                VoltTask.cancelingAsyncTask(task)
+                    .start(ModuleSpawning.get().getTaskManager());
             }
         }
     }
@@ -49,6 +50,7 @@ public class WorldRegenDaemon {
 
     public void start() {
         synchronized (this) {
+            ModuleSpawning.stats.start();
             scheduleThisScheduler();
         }
     }
@@ -56,6 +58,7 @@ public class WorldRegenDaemon {
     public void stop() {
         synchronized (this) {
             if (this.runningScheduler != null) {
+                ModuleSpawning.stats.stop();
                 this.runningScheduler.cancel();
                 this.runningScheduler = null;
             }

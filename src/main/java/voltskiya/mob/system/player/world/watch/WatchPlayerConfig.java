@@ -3,7 +3,6 @@ package voltskiya.mob.system.player.world.watch;
 public class WatchPlayerConfig {
 
     private static WatchPlayerConfig instance;
-    public boolean showSummonMob = true;
     protected WatchPlayerMobConfig mob = new WatchPlayerMobConfig();
 
     public WatchPlayerConfig() {

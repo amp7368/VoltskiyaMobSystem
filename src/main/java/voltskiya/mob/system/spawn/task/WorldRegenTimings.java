@@ -1,7 +1,7 @@
 package voltskiya.mob.system.spawn.task;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import voltskiya.mob.system.spawn.ModuleSpawning;
+import voltskiya.mob.system.spawn.timings.TimingsElement;
 
 public class WorldRegenTimings {
 
@@ -14,6 +14,8 @@ public class WorldRegenTimings {
     private final TimingsElement globalRules = new TimingsElement("globalRules");
     private final TimingsElement createMob = new TimingsElement("createMob");
     private final TimingsElement insertMob = new TimingsElement("insertMob");
+    private final TimingsElement chunkLoad = new TimingsElement("chunkLoad");
+    private final TimingsElement chunkScan = new TimingsElement("chunkScan");
 
     public void mobToTry() {
         mobToTry.mark();
@@ -51,10 +53,20 @@ public class WorldRegenTimings {
         insertMob.mark();
     }
 
+    public void chunkLoad() {
+        chunkLoad.mark();
+    }
+
+    public void chunkScan() {
+        chunkScan.mark();
+    }
+
     public String toString() {
         TimingsElement[] timings = {
             mobToTry,
             chooseLocation,
+            chunkLoad,
+            chunkScan,
             calculateBiomeInfo,
             checkBiomeSpawnerFails,
             randomMobSpawner,
@@ -62,8 +74,12 @@ public class WorldRegenTimings {
             globalRules,
             createMob,
             insertMob};
-        return "Timings Report [" + Arrays.stream(timings)
-            .map(TimingsElement::toString)
-            .collect(Collectors.joining("\n")) + "]";
+        return TimingsElement.report(timings);
     }
+
+    public void report() {
+        ModuleSpawning.get().logger().info(toString());
+    }
+
+
 }
