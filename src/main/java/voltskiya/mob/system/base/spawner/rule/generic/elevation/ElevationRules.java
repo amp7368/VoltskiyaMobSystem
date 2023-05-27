@@ -7,8 +7,8 @@ import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 
 public class ElevationRules extends SpawningRule {
 
-    private int minElevation = Integer.MIN_VALUE;
-    private int maxElevation = Integer.MAX_VALUE;
+    protected int minElevation = Integer.MIN_VALUE;
+    protected int maxElevation = Integer.MAX_VALUE;
 
     public ElevationRules() {
         super(GsonMapSpawningRule.ELEVATION.getTypeId());
@@ -22,6 +22,6 @@ public class ElevationRules extends SpawningRule {
     @Override
     public boolean isBreaksRule(SpawningContext context) {
         int y = context.location().getBlockY();
-        return NumberUtils.betweenInclusive(minElevation, y, maxElevation);
+        return !NumberUtils.betweenInclusive(minElevation, y, maxElevation);
     }
 }

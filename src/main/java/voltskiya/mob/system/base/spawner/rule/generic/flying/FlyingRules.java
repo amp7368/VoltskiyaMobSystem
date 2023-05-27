@@ -4,6 +4,8 @@ import apple.mc.utilities.item.material.MaterialUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
+import voltskiya.mob.system.base.spawner.modifier.flying.FlyingModifier;
+import voltskiya.mob.system.base.spawner.modifier.flying.FlyingModifierConfig;
 import voltskiya.mob.system.base.spawner.rule.generic.GsonMapSpawningRule;
 import voltskiya.mob.system.base.spawner.rule.generic.SpawningRule;
 
@@ -26,12 +28,12 @@ public class FlyingRules extends SpawningRule {
             if (isFailAboveGround(material))
                 return true;
         }
+        FlyingModifierConfig config = new FlyingModifierConfig(current);
+        context.modifyResult((c, result) -> new FlyingModifier(config, c, result));
         return false;
     }
 
     private boolean isFailAboveGround(Material material) {
-        if (material.isAir())
-            return false;
         if (MaterialUtils.isTree(material))
             return false;
         return !MaterialUtils.isWalkThroughable(material);

@@ -1,55 +1,75 @@
 package voltskiya.mob.system.spawn.config;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.storage.mob.MobStorage;
 import voltskiya.mob.system.storage.world.WorldStorage;
 
 public class RegenStatsMap {
 
+    private static final int UPDATE_INTERVAL = 300;
+    private static final AtomicInteger INCREMENT = new AtomicInteger();
     private static List<RegenStatsMap> maps;
-    private final long blockCount;
-    private final double desiredDensity;
+    public final MapRegenConfig config;
+    private final BigDecimal blockCount;
+    private final BigDecimal desiredDensity;
     private final double hitRatio;
-    private final MapRegenConfig config;
-
-    // todo update on insert & delete
-    private final int mobCount;
-
-    private final double density;
+    private BigDecimal density;
 
     public RegenStatsMap(MapRegenConfig config) {
         this.config = config;
-        this.mobCount = MobStorage.countMobs(config.getWorld().worldId);
         this.hitRatio = WorldStorage.hitRatio(config.getWorld());
-        this.blockCount = (long) config.xRange() * config.yRange() * config.zRange();
-        if (blockCount == 0) {
-            desiredDensity = density = 0;
-            return;
-        }
-        this.density = mobCount * 1000 / (double) blockCount; // todo update density when mobs are inserted
-        this.desiredDensity = 1000 / Math.pow(config.density, 3);
+        this.blockCount = BigDecimal.valueOf((long) config.xRange() * config.yRange() * config.zRange());
+        this.desiredDensity = BigDecimal.valueOf(config.density)
+            .divide(BigDecimal.valueOf(10_000_000), Double.SIZE, RoundingMode.HALF_UP);
+        updateMobCount();
+
     }
 
     public static synchronized void load() {
         maps = RegenConfig.get().maps.values().stream().map(RegenStatsMap::new).toList();
     }
 
-    public static synchronized MapRegenConfig chooseMap() {
+    public static synchronized RegenStatsMap chooseMap() {
         if (maps.isEmpty()) throw new IllegalStateException("There are no RegenStatsMap's to choose from");
-        return maps.stream()
-            .map(m -> Map.entry(m, m.chance()))
-            .max(Comparator.comparingDouble(Entry::getValue))
-            .orElseThrow()
-            .getKey().config;
+        if (INCREMENT.incrementAndGet() % UPDATE_INTERVAL == 0) {
+            maps.forEach(RegenStatsMap::updateMobCount);
+        }
+        RegenStatsMap map = maps.stream()
+            .max(Comparator.comparing(RegenStatsMap::chance))
+            .orElseThrow();
+        if (map.chance().compareTo(BigDecimal.ZERO) <= 0) return null;
+        return map;
     }
 
-    private double chance() {
-        boolean isBadWorld = this.blockCount == 0 || !this.config.mobSpawningIsOn || this.config.getWorld() == null;
+    private void updateMobCount() {
+        int mobCount = MobStorage.countMobs(config.getWorld().worldId);
+        if (blockCount.equals(BigDecimal.ZERO)) {
+            density = BigDecimal.ZERO;
+            return;
+        }
+        this.density = BigDecimal.valueOf(mobCount)
+            .divide(blockCount, Double.SIZE, RoundingMode.HALF_UP);
+        if (config.mobSpawningIsOn && this.desiredDensity.compareTo(this.density) <= 0) {
+            ModuleSpawning.get().logger().info("desiredDensity " + this.desiredDensity);
+            ModuleSpawning.get().logger().info("density " + this.density);
+        }
+    }
+
+    public boolean isDensityTooHigh(double density) {
+        return desiredDensity.doubleValue() < density;
+    }
+
+    private BigDecimal chance() {
+        boolean isBadWorld = this.blockCount.equals(BigDecimal.ZERO) ||
+            !this.config.mobSpawningIsOn ||
+            this.config.getWorld() == null;
         if (isBadWorld)
-            return Double.MIN_VALUE;
-        return this.desiredDensity - this.density;
+            return BigDecimal.ZERO;
+        return this.desiredDensity.subtract(this.density);
     }
 }

@@ -13,7 +13,9 @@ public abstract class SpawningModifier<Config> {
         this.config = config;
         this.context = context;
         this.result = result;
+        this.result.addModifier(this);
     }
+
 
     public abstract void preModifyEntity();
 

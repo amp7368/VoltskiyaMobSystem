@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
+import voltskiya.mob.system.base.spawner.LeafSpawner;
 import voltskiya.mob.system.base.util.UUIDWrapper;
 
 public class SpawnSelectorGrouping {
@@ -29,17 +30,24 @@ public class SpawnSelectorGrouping {
         return compiled;
     }
 
-    public BuiltSpawner init(InitializingCallerStack callerStack) throws CircularDependencyException {
-        if (compiled != null) return compiled;
-        callerStack.tryPush(this);
-        Set<BuiltSpawner> allSelectors = new HashSet<>();
+    public Set<LeafSpawner> init(InitializingCallerStack callerStack) throws CircularDependencyException {
+        if (compiled != null) return compiled.getLeaves();
+        callerStack.tryPushGroup(this);
+        Set<LeafSpawner> leaves = new HashSet<>();
         for (SpawnSelectorUUID uuid : this.extendsSpawnSelector) {
             SpawnSelector selector = uuid.mapped();
-            allSelectors.add(BuiltSpawner.fromOne(selector));
-            allSelectors.add(selector.getExtendsClause().init(callerStack));
+            callerStack.pushSelector(selector);
+            Set<LeafSpawner> extendsClause = selector.getExtendsClause().init(callerStack);
+            if (extendsClause.isEmpty()) {
+                leaves.add(new LeafSpawner(callerStack.copyExtends(selector)));
+            } else {
+                leaves.addAll(extendsClause);
+            }
+            callerStack.popSelector();
         }
-        callerStack.pop();
-        return compiled = BuiltSpawner.fromBuilt(allSelectors);
+        callerStack.popGroup();
+        compiled = new BuiltSpawner(leaves);
+        return leaves;
     }
 
     public Collection<SpawnSelectorUUID> getSpawnerTags() {

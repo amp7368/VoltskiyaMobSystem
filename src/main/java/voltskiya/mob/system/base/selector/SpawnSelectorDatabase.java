@@ -24,7 +24,7 @@ public class SpawnSelectorDatabase extends HashMap<SpawnSelectorUUID, SpawnSelec
         File folder = ModuleBase.get().getFile("SpawnSelectors");
         manager = AppleAJD.createTyped(SpawnSelector.class, folder, FileIOServiceNow.taskCreator(), gson());
 
-        for (SpawnSelector selector : manager.loadFolderNow()) {
+        for (SpawnSelector selector : manager.loadFolderNow(true)) {
             selectors.put(selector.getUUID(), selector);
         }
     }

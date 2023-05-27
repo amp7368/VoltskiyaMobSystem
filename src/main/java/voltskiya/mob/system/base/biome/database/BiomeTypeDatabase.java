@@ -10,8 +10,10 @@ public class BiomeTypeDatabase extends AbstractBiomeDatabase<BiomeType> {
     private transient double globalSpawnRate = 0;
 
     public void loadGlobalStats() {
-        globalSpawnRate = this.list().stream().map(biome -> biome.getSpawner().attributesTopLevel().getSpawnRate())
-            .max(Comparator.comparingDouble(d -> d)).orElse(1d);
+        globalSpawnRate = this.list()
+            .stream()
+            .map(biome -> biome.getSpawner().getMaxSpawnRate())
+            .max(Comparator.comparingDouble(s -> s)).orElse(1d);
     }
 
     public double getGlobalSpawnRate() {
@@ -20,5 +22,10 @@ public class BiomeTypeDatabase extends AbstractBiomeDatabase<BiomeType> {
 
     public List<SpawnSelectorGrouping> listSelectors() {
         return list().stream().map(BiomeType::getSpawnerTags).toList();
+    }
+
+    public double normalizedSpawnRate(double spawnRate) {
+        if (globalSpawnRate == 0) return 0;
+        return spawnRate / globalSpawnRate;
     }
 }

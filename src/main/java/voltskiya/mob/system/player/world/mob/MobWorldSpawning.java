@@ -1,6 +1,7 @@
 package voltskiya.mob.system.player.world.mob;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,8 +10,7 @@ import voltskiya.mob.system.VoltskiyaPlugin;
 import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeType;
 import voltskiya.mob.system.base.mob.MobType;
-import voltskiya.mob.system.base.selector.ExtendsMob;
-import voltskiya.mob.system.base.spawner.BuiltSpawner;
+import voltskiya.mob.system.base.spawner.LeafSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.spawn.config.RegenConfig;
 import voltskiya.mob.system.storage.mob.DStoredMob;
@@ -18,7 +18,7 @@ import voltskiya.mob.system.storage.mob.MobStorage;
 
 public class MobWorldSpawning {
 
-    public static void spawnMobs(List<DStoredMob> mobs) {
+    public static void spawnMobs(Collection<DStoredMob> mobs) {
         List<DStoredMob> mobsToAddBack = new ArrayList<>();
         for (DStoredMob storedMob : mobs) {
             long spawnDelay = trySpawn(storedMob).getSpawnDelay();
@@ -37,22 +37,23 @@ public class MobWorldSpawning {
         @Nullable BiomeType biomeType = BiomeDatabases.getBiomeType().get(context.biomeUUID());
         // if the biome has no mobs assigned to it, remove the mob
         if (biomeType == null) return ShouldSpawningResult.SHOULD_REMOVE;
-        List<ExtendsMob> mobInBiome = biomeType.getSpawner().getExtendsMob()
+        List<LeafSpawner> leaves = biomeType.getSpawner().getLeaves()
             .stream()
-            .filter(e -> e.mob.equals(mobType.getId()))
+            .filter(s -> s.hasMob(mobType.getId()))
             .toList();
-        if (mobInBiome.isEmpty()) return ShouldSpawningResult.SHOULD_REMOVE;
-        BuiltSpawner spawner = null;
+        if (leaves.isEmpty()) return ShouldSpawningResult.SHOULD_REMOVE;
+        LeafSpawner spawner = null;
         ShouldSpawningResult ruleResult = null;
-        for (ExtendsMob extendsMob : mobInBiome) {
-            spawner = mobType.getBiomeSpawner(extendsMob, biomeType.getSpawner()).spawner();
+        for (LeafSpawner leaf : leaves) {
+            spawner = mobType.getBiomeSpawner(leaf);
             ruleResult = spawner.shouldSpawn(context);
             if (ruleResult.shouldSpawn()) break;
         }
 
         if (ruleResult.shouldSpawn()) {
-            SpawnerSummonResult summonResult = spawner.prepare(context);
-            summonResult.spawn(mobType);
+            boolean skipModifications = !storedMob.isFirstSpawn();
+            SpawnerSummonResult summonResult = spawner.prepare(context, skipModifications);
+            summonResult.spawn(mobType, skipModifications);
             logMobSummon(storedMob);
         }
         return ruleResult;

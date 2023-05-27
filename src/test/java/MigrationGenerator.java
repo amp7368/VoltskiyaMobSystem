@@ -7,6 +7,7 @@ public class MigrationGenerator {
     public static void main(String[] args) throws IOException {
         DbMigration dbMigration = DbMigration.create();
         dbMigration.setPlatform(Platform.MYSQL);
+        dbMigration.setName("MobSystem");
         dbMigration.generateMigration();
     }
 }

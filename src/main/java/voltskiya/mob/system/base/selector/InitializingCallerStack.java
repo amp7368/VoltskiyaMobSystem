@@ -9,6 +9,8 @@ public class InitializingCallerStack {
 
     private final List<SpawnSelectorGrouping> stack = new ArrayList<>();
     private final Set<SpawnSelectorGrouping> stackSet = new HashSet<>();
+    private final List<SpawnSelector> selectorStack = new ArrayList<>();
+    private final Set<SpawnSelector> selectorSet = new HashSet<>();
 
     public String circularDependency() {
         int lastIndex = stack.size() - 1;
@@ -29,13 +31,29 @@ public class InitializingCallerStack {
         return message.toString();
     }
 
-    public void tryPush(SpawnSelectorGrouping element) throws CircularDependencyException {
+    public void tryPushGroup(SpawnSelectorGrouping element) throws CircularDependencyException {
         this.stack.add(element);
         if (!this.stackSet.add(element)) throw new CircularDependencyException(this.circularDependency());
     }
 
-    public void pop() {
+    public void popGroup() {
         int lastIndex = stack.size() - 1;
         stackSet.remove(stack.remove(lastIndex));
+    }
+
+    public void pushSelector(SpawnSelector selector) throws CircularDependencyException {
+        this.selectorStack.add(selector);
+        if (!this.selectorSet.add(selector)) throw new CircularDependencyException(this.circularDependency());
+    }
+
+    public void popSelector() {
+        int lastIndex = selectorStack.size() - 1;
+        selectorSet.remove(selectorStack.remove(lastIndex));
+    }
+
+    public Set<SpawnSelector> copyExtends(SpawnSelector selector) {
+        Set<SpawnSelector> copy = new HashSet<>(selectorSet);
+        copy.add(selector);
+        return copy;
     }
 }

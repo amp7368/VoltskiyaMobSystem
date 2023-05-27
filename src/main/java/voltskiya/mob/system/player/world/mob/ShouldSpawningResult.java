@@ -8,12 +8,13 @@ public class ShouldSpawningResult {
     private boolean shouldRemove = false;
     private long spawnDelay = 0;
 
-    public ShouldSpawningResult(boolean shouldRemove) {
+    private ShouldSpawningResult(boolean shouldRemove) {
         this.shouldRemove = shouldRemove;
     }
 
     public ShouldSpawningResult() {
     }
+
 
     public long getSpawnDelay() {
         return spawnDelay;

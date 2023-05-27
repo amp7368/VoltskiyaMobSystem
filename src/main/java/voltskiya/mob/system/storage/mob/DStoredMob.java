@@ -1,19 +1,21 @@
 package voltskiya.mob.system.storage.mob;
 
-import io.ebean.Model;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.mob.MobType;
 import voltskiya.mob.system.base.mob.MobTypeDatabase;
 import voltskiya.mob.system.base.mob.MobUUID;
+import voltskiya.mob.system.storage.BaseEntity;
 
 @Entity
-public class DStoredMob extends Model {
+@Table(name = "stored_mob")
+public class DStoredMob extends BaseEntity {
 
     @Id
     private long id;
@@ -30,6 +32,8 @@ public class DStoredMob extends Model {
     @Column(nullable = false)
     private long spawnDelay;
 
+    @Column(nullable = false)
+    private boolean isFirstSpawn = true;
 
     public DStoredMob(MobUUID mobType, @NotNull Location location) {
         this.mobType = mobType;
@@ -56,5 +60,14 @@ public class DStoredMob extends Model {
 
     public void setSpawnDelay(long spawnDelay) {
         this.spawnDelay = spawnDelay;
+    }
+
+    public boolean isFirstSpawn() {
+        return isFirstSpawn;
+    }
+
+    public DStoredMob setIsFirstSpawn(boolean isFirstSpawn) {
+        this.isFirstSpawn = isFirstSpawn;
+        return this;
     }
 }

@@ -4,9 +4,12 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import voltskiya.mob.system.storage.BaseEntity;
 
 @Entity()
-public class StoredWorld {
+@Table(name = "stored_world")
+public class StoredWorld extends BaseEntity {
 
     @Id
     @Column(nullable = false)

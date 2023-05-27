@@ -1,12 +1,7 @@
 package voltskiya.mob.system.base.spawner.modifier.group;
 
-import de.tr7zw.nbtapi.NBTEntity;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.base.mob.MobType;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifier;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifierPriority;
@@ -25,19 +20,13 @@ public class GroupModifier extends SpawningModifier<GroupModifierFactory> {
 
     @Override
     public void modifyEntity() {
-        Block block = context.feetBlock();
-        Entity originalSpawned = result.getSpawned();
-        NBTEntity originalNbt = new NBTEntity(originalSpawned);
-        // todo does this work
-        originalNbt.removeKey("UUID");
+        MobType mobType = result.getMobType();
         int mobCount = config.choose().getCount();
-        for (int i = 0; i < mobCount; i++) {
-            World world = block.getWorld();
-            Location location = block.getLocation();
-            EntityType entityType = originalSpawned.getType();
-            world.spawnEntity(location, entityType, SpawnReason.NATURAL,
-                copy -> new NBTEntity(copy).mergeCompound(originalNbt));
-        }
+        VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> {
+            for (int i = 1; i < mobCount; i++) {
+                result.spawn(mobType, (modifier) -> !(modifier instanceof GroupModifier));
+            }
+        });
     }
 
     @Override

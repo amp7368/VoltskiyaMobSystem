@@ -26,7 +26,6 @@ public class CollisionRule {
         float height = type.getHeight();
         float halfWidth = type.getWidth() / 2;
         int checkRadius = (int) Math.ceil(Math.max(height * 2, halfWidth * 4));
-
         timings.gatherWorld();
         List<VoxelShape> blocks = new ArrayList<>();
         for (int xi = -checkRadius; xi <= checkRadius; xi++) {
@@ -60,10 +59,10 @@ public class CollisionRule {
             VoxelShape intersection = Shapes.join(shiftedEntity, world, BooleanOp.AND);
             if (intersection.isEmpty()) {
                 // no collisions!
-                Vec3 entityCenter = shiftedEntity.bounds().getCenter();
                 timings.stepMath();
+                Vec3 center = shiftedEntity.bounds().getCenter();
 //                timings.report();
-                return location.clone().add(entityCenter.x, entityCenter.y - height / 2, entityCenter.z);
+                return location.clone().add(center.x, center.y, center.z);
             }
             Vec3 moveDelta = checkedMoveFromFailure(shiftedEntity, intersection, checkRadius);
             if (moveDelta == null) {
@@ -111,7 +110,7 @@ public class CollisionRule {
         double x = moveFromFailure(Axis.X, failDirection.x, shiftedEntity, intersectionBox);
         double y = moveFromFailure(Axis.Y, failDirection.y, shiftedEntity, intersectionBox);
         double z = moveFromFailure(Axis.Z, failDirection.z, shiftedEntity, intersectionBox);
-        return new Vec3(x, y, z);
+        return new Vec3(x, y, z).scale(1.001); // make sure we don't barely clip into the block
     }
 
     private static double moveFromFailure(Axis axis, double failDirection, VoxelShape currentShape, AABB failedPortion) {

@@ -1,6 +1,7 @@
 package voltskiya.mob.system.storage;
 
 import com.voltskiya.lib.AbstractModule;
+import voltskiya.mob.system.storage.mob.MobStorage;
 
 public class ModuleStorage extends AbstractModule {
 
@@ -16,7 +17,8 @@ public class ModuleStorage extends AbstractModule {
 
     @Override
     public void enable() {
-        VoltskiyaDatabase.load();
+        new MobDatabase();
+        MobStorage.resetMobSpawnDelay();
     }
 
     @Override

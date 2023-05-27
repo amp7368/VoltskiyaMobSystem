@@ -11,6 +11,7 @@ import voltskiya.mob.system.base.selector.SpawnSelector;
 import voltskiya.mob.system.base.selector.SpawnSelectorDatabase;
 import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
 import voltskiya.mob.system.base.util.MaterialDatabase;
+import voltskiya.mob.system.spawn.task.BiomeErrors;
 
 public class ModuleBase extends AbstractModule {
 
@@ -34,6 +35,7 @@ public class ModuleBase extends AbstractModule {
 
     @Override
     public void enable() {
+        BiomeErrors.load();
         SpawnSelectorDatabase.load();
         BiomeDatabases.load();
         MobTypeDatabase.load();

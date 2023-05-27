@@ -1,6 +1,11 @@
 package voltskiya.mob.system.spawn.config;
 
 import apple.mc.utilities.item.material.MaterialUtils;
+import apple.utilities.structures.Pair;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import org.bukkit.Chunk;
@@ -17,8 +22,10 @@ import voltskiya.mob.system.storage.world.WorldUUID;
 public class MapRegenConfig {
 
 
-    private static final byte RANDOM_LOCATION_HEIGHT = 100;
-    private transient final Random random = new Random();
+    private static final byte RANDOM_LOCATION_HEIGHT = 75;
+    private transient final Random random = new SecureRandom();
+    private transient final List<Pair<Byte, Byte>> coords = new ArrayList<>(
+        VoltskiyaPlugin.BLOCKS_IN_CHUNK * VoltskiyaPlugin.BLOCKS_IN_CHUNK);
     public UUID world;
     public String worldName;
     //todo set this in-game through command
@@ -27,7 +34,7 @@ public class MapRegenConfig {
     public int x2 = 0;
     public int z1 = 0;
     public int z2 = 0;
-    public double density = 20.0;
+    public double density = 50.0;
     private transient int xMin;
     private transient int xMax;
     private transient int yMin;
@@ -35,7 +42,6 @@ public class MapRegenConfig {
     private transient int zMin;
     private transient int zMax;
     private transient WorldUUID worldUUID;
-    private transient int yMinStarting;
 
     public MapRegenConfig(World world) {
         this.world = world.getUID();
@@ -54,9 +60,13 @@ public class MapRegenConfig {
         }
         xMin = Math.min(x1, x2);
         xMax = Math.max(x1, x2);
-        zMin = Math.min(x1, x2);
-        zMax = Math.max(x1, x2);
-        yMinStarting = yMin + RANDOM_LOCATION_HEIGHT;
+        zMin = Math.min(z1, z2);
+        zMax = Math.max(z1, z2);
+        for (byte xi = 0; xi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; xi++) {
+            for (byte zi = 0; zi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; zi++) {
+                coords.add(new Pair<>(xi, zi));
+            }
+        }
     }
 
 
@@ -70,10 +80,7 @@ public class MapRegenConfig {
 
 
     public int yRange() {
-        World world = getWorld().getBukkit();
-        if (world == null)
-            return 0;
-        return world.getMaxHeight() - world.getMinHeight();
+        return yMax - yMin;
     }
 
     public WorldUUID getWorld() {
@@ -97,15 +104,15 @@ public class MapRegenConfig {
         World bukkit = getWorld().getBukkit();
         if (bukkit == null) return null;
         int xRange = xRange();
-        int yRange = yRange();
+        int yRange = yRange() - RANDOM_LOCATION_HEIGHT;
         int zRange = zRange();
-        if (xRange == 0 || yRange == 0 || zRange == 0) return null;
+        if (xRange == 0 || yRange <= 0 || zRange == 0) return null;
         int x;
         int y;
         int z;
         synchronized (random) {
             x = random.nextInt(xRange) + xMin;
-            y = random.nextInt(yRange) + yMin;
+            y = random.nextInt(yRange) + yMin + RANDOM_LOCATION_HEIGHT;
             z = random.nextInt(zRange) + zMin;
         }
         return new Location(bukkit, x, y, z);
@@ -115,24 +122,30 @@ public class MapRegenConfig {
         Location center = randomLocation();
         if (center == null) return null;
         timings.chunkLoad();
-        @NotNull Chunk chunk = getWorld().getBukkit().getChunkAt(center);
+        World world = getWorld().getBukkit();
+        if (world == null) return null;
+        @NotNull Chunk chunk = world.getChunkAt(center);
         timings.chunkLoad();
-
         timings.chunkScan();
-        for (byte xi = 0; xi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; xi++) {
-            for (byte zi = 0; zi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; zi++) {
-                boolean hitAir = false;
-                for (int y = center.getBlockY(), max = Math.max(yMin, y - RANDOM_LOCATION_HEIGHT); y > max; y--) {
-                    @NotNull Material material = chunk.getBlock(xi, y, zi).getType();
-                    if (MaterialUtils.isTree(material)) {
-                        // find air again
-                        hitAir = false;
-                    } else if (MaterialUtils.isWalkThroughable(material)) {
-                        hitAir = true;
-                    } else if (hitAir) {
-                        center.setY(y);
-                        return center.add(.5 + xi, 1, .5 + zi);
-                    }
+        Collections.shuffle(this.coords, random);
+        int localYMin = Math.max(yMin, center.getBlockY() - RANDOM_LOCATION_HEIGHT);
+        for (Pair<Byte, Byte> coord : coords) {
+            byte xi = coord.getKey();
+            byte zi = coord.getValue();
+            boolean hitAir = false;
+            for (int y = center.getBlockY(); y > localYMin; y--) {
+                @NotNull Material material = chunk.getBlock(xi, y, zi).getType();
+                if (MaterialUtils.isTree(material)) {
+                    // find air again
+                    hitAir = false;
+                } else if (MaterialUtils.isWalkThroughable(material)) {
+                    hitAir = true;
+                } else if (hitAir) {
+                    return chunk.getBlock(xi, y, zi)
+                        .getLocation()
+                        .add(0.5, 1, 0.5);
+                } else if (material == Material.WATER) {
+                    hitAir = true;
                 }
             }
         }

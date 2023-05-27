@@ -21,11 +21,13 @@ public class RegenConfig {
     public boolean logMobSpawn = true;
     public boolean logMobSummon = true;
     public int logMobCountInterval = 20;
+    protected boolean doTimings = false;
 
     public static void load() {
         File file = ModuleSpawning.get().getFile("WorldRegenConfig.json");
         manager = AppleAJD.createInst(RegenConfig.class, file, FileIOServiceNow.taskCreator());
         manager.loadOrMake().init();
+        manager.saveNow();
     }
 
     public static RegenConfig get() {
@@ -41,5 +43,9 @@ public class RegenConfig {
             maps.putIfAbsent(world.getUID(), new MapRegenConfig(world));
         }
         maps.values().forEach(MapRegenConfig::init);
+    }
+
+    public boolean shouldDoTimings() {
+        return doTimings;
     }
 }

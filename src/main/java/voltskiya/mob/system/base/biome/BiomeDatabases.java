@@ -8,13 +8,16 @@ import com.google.gson.GsonBuilder;
 import com.voltskiya.lib.pmc.FileIOServiceNow;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Biome;
 import org.jetbrains.annotations.NotNull;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.base.biome.database.BiomeTemperatureDatabase;
 import voltskiya.mob.system.base.biome.database.BiomeTypeDatabase;
+import voltskiya.mob.system.spawn.task.BiomeErrors;
 
 public class BiomeDatabases {
 
@@ -37,6 +40,13 @@ public class BiomeDatabases {
         // make sure all minecraft biomes are saved
         for (Biome biome : Biome.values()) {
             BiomeDatabases.getBiome(biome.getKey());
+        }
+        Set<String> biomeTypes = new HashSet<>();
+        for (BiomeType biome : getBiomeType().list()) {
+            String minecraft = biome.getMinecraft().toString();
+            if (!biomeTypes.add(minecraft)) {
+                BiomeErrors.get().addDuplicateType(minecraft);
+            }
         }
         idManager.saveNow();
         temperatureManager.saveNow();

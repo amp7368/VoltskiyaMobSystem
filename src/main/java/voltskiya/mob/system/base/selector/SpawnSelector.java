@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import voltskiya.mob.system.base.ModuleBase;
 import voltskiya.mob.system.base.mob.MobUUID;
-import voltskiya.mob.system.base.spawner.BuiltSpawner;
+import voltskiya.mob.system.base.spawner.LeafSpawner;
 import voltskiya.mob.system.base.spawner.Spawner;
 
 public class SpawnSelector implements HasFilename {
@@ -19,7 +19,7 @@ public class SpawnSelector implements HasFilename {
     protected SpawnSelectorGrouping extendsClause = new SpawnSelectorGrouping();
     protected SpawnSelectorUUID uuid;
     protected String name;
-    protected transient BuiltSpawner cachedSpawner;
+    protected transient LeafSpawner cachedSpawner;
 
     public SpawnSelector(SpawnSelectorUUID uuid, String name) {
         this.uuid = uuid;
@@ -51,9 +51,9 @@ public class SpawnSelector implements HasFilename {
         return gson;
     }
 
-    public BuiltSpawner compiled() {
+    public LeafSpawner compiled() {
         if (this.cachedSpawner != null) return this.cachedSpawner;
-        return this.cachedSpawner = BuiltSpawner.fromBuilt(List.of(this.extendsClause.compiled()), this);
+        return this.cachedSpawner = LeafSpawner.fromBuilt(this.extendsClause.compiled().getLeaves(), this);
     }
 
     public SpawnSelectorGrouping getExtendsClause() {

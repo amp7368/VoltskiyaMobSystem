@@ -34,9 +34,6 @@ public class BiomeType {
         return gson;
     }
 
-//    public Biome getMinecraft(World world) {
-//        return DecodeBiome.getBiomeFromKey(world, DecodeMinecraftKey.makeKey(this.minecraft));
-//    }
 
     public String getName() {
         return this.name;
@@ -49,5 +46,9 @@ public class BiomeType {
     public SpawnSelectorGrouping getSpawnerTags() {
         this.spawnTags.setName(this.name, this.uuid);
         return this.spawnTags;
+    }
+
+    public NamespacedKey getMinecraft() {
+        return this.minecraft;
     }
 }

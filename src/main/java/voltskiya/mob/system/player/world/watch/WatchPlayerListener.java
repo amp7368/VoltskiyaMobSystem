@@ -2,12 +2,12 @@ package voltskiya.mob.system.player.world.watch;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.VoltskiyaPlugin;
 import voltskiya.mob.system.base.mob.MobTypeDatabase;
@@ -27,13 +27,21 @@ public class WatchPlayerListener implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onChunkUnload(ChunkUnloadEvent event) {
-        @NotNull Entity[] entities = event.getChunk().getEntities();
+    public void onChunkUnload(EntitiesUnloadEvent event) {
         List<DStoredMob> mobsToUnload = new ArrayList<>();
-        for (Entity entity : entities) {
+        List<Entity> entitiesToUnload = new ArrayList<>();
+        for (Entity entity : event.getEntities()) {
             @Nullable MobUUID mobType = MobTypeDatabase.getMobUUID(entity);
-            mobsToUnload.add(new DStoredMob(mobType, entity.getLocation()));
+            if (mobType == null) continue;
+            mobsToUnload.add(new DStoredMob(mobType, entity.getLocation()).setIsFirstSpawn(false));
+            entitiesToUnload.add(entity);
         }
-        MobStorage.insertMobs(mobsToUnload);
+        if (!mobsToUnload.isEmpty())
+            Bukkit.getScheduler().runTaskAsynchronously(VoltskiyaPlugin.get(), () -> {
+                MobStorage.insertMobs(mobsToUnload);
+                VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> {
+                    entitiesToUnload.forEach(Entity::remove);
+                });
+            });
     }
 }

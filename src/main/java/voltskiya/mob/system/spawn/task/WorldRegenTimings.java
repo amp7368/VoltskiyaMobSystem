@@ -16,6 +16,7 @@ public class WorldRegenTimings {
     private final TimingsElement insertMob = new TimingsElement("insertMob");
     private final TimingsElement chunkLoad = new TimingsElement("chunkLoad");
     private final TimingsElement chunkScan = new TimingsElement("chunkScan");
+    private final TimingsElement localSpawnRate = new TimingsElement("localSpawnRate");
 
     public void mobToTry() {
         mobToTry.mark();
@@ -27,10 +28,6 @@ public class WorldRegenTimings {
 
     public void calculateBiomeInfo() {
         calculateBiomeInfo.mark();
-    }
-
-    public void checkBiomeSpawnerFails() {
-        checkBiomeSpawnerFails.mark();
     }
 
     public void randomMobSpawner() {
@@ -82,4 +79,7 @@ public class WorldRegenTimings {
     }
 
 
+    public void localSpawnRate() {
+        localSpawnRate.mark();
+    }
 }

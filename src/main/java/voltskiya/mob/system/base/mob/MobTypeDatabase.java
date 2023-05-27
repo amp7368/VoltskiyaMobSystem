@@ -58,10 +58,8 @@ public class MobTypeDatabase {
                 String mobId = tag.substring(MOB_TYPE_ID_PREFIX.length());
                 try {
                     MobUUID mobUUID = new MobUUID(Integer.parseInt(mobId));
-                    if (mobUUID.mapped() == null) return null;
-                    return mobUUID;
-                } catch (NumberFormatException e) {
-                    return null;
+                    if (mobUUID.mapped() != null) return mobUUID;
+                } catch (NumberFormatException ignored) {
                 }
             }
         }

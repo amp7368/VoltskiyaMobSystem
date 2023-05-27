@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import voltskiya.apple.utilities.minecraft.player.PlayerUtils;
 import voltskiya.mob.system.VoltskiyaPlugin;
 
 public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
@@ -21,15 +21,16 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
 
 
     public static void load() {
-        VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> Bukkit.getOnlinePlayers().forEach(WatchPlayer::putIfAbsent));
         Bukkit.getScheduler()
-            .scheduleSyncRepeatingTask(VoltskiyaPlugin.get(), WatchPlayer::tickAll, 1, 10 * 20);
+            .scheduleSyncRepeatingTask(VoltskiyaPlugin.get(), WatchPlayer::tickAll, 1, 2 * 20);
 
     }
 
     private static void tickAll() {
         List<WatchPlayer> watchPlayers;
         synchronized (watches) {
+            for (Player player : Bukkit.getOnlinePlayers()) putIfAbsent(player);
+
             watchPlayers = List.copyOf(watches.values());
         }
         watchPlayers.forEach(WatchPlayer::tick);
@@ -48,8 +49,7 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
     }
 
     private static boolean shouldTick(Player player) {
-        GameMode gameMode = player.getGameMode();
-        return gameMode == GameMode.SURVIVAL || gameMode == GameMode.ADVENTURE;
+        return PlayerUtils.isSurvival(player);
     }
 
     private void tick() {

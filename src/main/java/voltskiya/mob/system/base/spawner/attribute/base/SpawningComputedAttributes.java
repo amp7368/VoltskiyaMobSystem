@@ -21,8 +21,5 @@ public class SpawningComputedAttributes {
         this.spawnRate = update.apply(this.spawnRate);
     }
 
-    public double getNormalizedSpawnRate(double globalSpawnRate) {
-        if (globalSpawnRate == 0) return 0;
-        return spawnRate / globalSpawnRate;
-    }
+
 }

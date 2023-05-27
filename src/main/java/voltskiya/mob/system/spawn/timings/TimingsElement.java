@@ -22,13 +22,11 @@ public class TimingsElement {
     }
 
     public void mark() {
-        if (didFinish) {
-            throw new IllegalStateException("Already finished " + name + " timings");
-        }
-        if (didStart) {
-            duration = System.nanoTime() - start;
+        if (didStart && !didFinish) {
+            duration += System.nanoTime() - start;
             didFinish = true;
         } else {
+            didFinish = false;
             didStart = true;
             start = System.nanoTime();
         }

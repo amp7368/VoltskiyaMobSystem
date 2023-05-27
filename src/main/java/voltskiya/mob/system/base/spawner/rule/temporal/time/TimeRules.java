@@ -8,7 +8,7 @@ import voltskiya.mob.system.base.spawner.rule.temporal.TimeOfDay;
 
 public class TimeRules extends SpawningTemporalRule {
 
-    private Map<TimeOfDay, Boolean> allowedTimes = new HashMap<>() {{
+    public Map<TimeOfDay, Boolean> allowedTimes = new HashMap<>() {{
         for (TimeOfDay time : TimeOfDay.values())
             this.put(time, true);
     }};
@@ -23,15 +23,16 @@ public class TimeRules extends SpawningTemporalRule {
 
     @Override
     public long spawnDelay(SpawningContext context) {
-        TimeOfDay now = context.timeOfDay();
-        boolean allowNow = this.allowedTimes.get(now);
-        if (allowNow)
-            return 0;
-        for (TimeOfDay time = now.next(); time != now; time = time.next()) {
-            Boolean allow = this.allowedTimes.get(now);
-            if (allow)
-                return time.timeUntil(context.time());
-        }
-        return 24000;
+        return 0;
+//        TimeOfDay now = context.timeOfDay();
+//        boolean allowNow = this.allowedTimes.get(now);
+//        if (allowNow)
+//            return 0;
+//        for (TimeOfDay time = now.next(); time != now; time = time.next()) {
+//            Boolean allow = this.allowedTimes.get(time);
+//            if (allow)
+//                return time.timeUntil(context.time());
+//        }
+//        return 24000;
     }
 }

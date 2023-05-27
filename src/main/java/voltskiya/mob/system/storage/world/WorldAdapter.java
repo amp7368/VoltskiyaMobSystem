@@ -16,7 +16,7 @@ public class WorldAdapter {
 
     private static AppleAJDInst<WorldAdapter> manager;
     private final transient BiMap<UUID, WorldUUID> uuidToId = HashBiMap.create();
-    private final Map<Short, WorldUUID> worlds = new HashMap<>();
+    protected Map<Short, WorldUUID> worlds = new HashMap<>();
     private transient short nextId;
 
     public static void load() {

@@ -28,8 +28,9 @@ public class SpawningAttributes {
         return computed = new SpawningComputedAttributes(new ArrayList<>(modifiers));
     }
 
-    public void join(SpawningAttributes other) {
+    public SpawningAttributes join(SpawningAttributes other) {
         this.modifiers.addAll(other.modifiers);
+        return this;
     }
 
 }

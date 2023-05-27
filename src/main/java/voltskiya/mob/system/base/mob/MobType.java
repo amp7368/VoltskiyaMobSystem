@@ -8,7 +8,7 @@ import org.bukkit.entity.Entity;
 import voltskiya.mob.system.base.selector.ExtendsMob;
 import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
 import voltskiya.mob.system.base.selector.SpawnSelectorUUID;
-import voltskiya.mob.system.base.spawner.BuiltSpawner;
+import voltskiya.mob.system.base.spawner.LeafSpawner;
 
 public class MobType implements HasFilename {
 
@@ -16,7 +16,7 @@ public class MobType implements HasFilename {
     protected MobUUID uuid;
     protected String mobName;
     protected EntitySerializable entity;
-    protected transient BuiltSpawner spawner;
+    protected transient LeafSpawner spawner;
 
     public static GsonBuilderDynamic gson(GsonBuilderDynamic gson) {
         gson.registerTypeHierarchyAdapter(SpawnSelectorUUID.class, SpawnSelectorUUID.typeAdapter());
@@ -32,11 +32,12 @@ public class MobType implements HasFilename {
     }
 
     public void init() {
-        List<BuiltSpawner> parents = spawnerTags.getSpawnerTags()
+
+        List<LeafSpawner> parents = spawnerTags.getSpawnerTags()
             .stream()
             .map(tag -> tag.mapped().compiled())
             .toList();
-        spawner = BuiltSpawner.fromBuilt(parents);
+        spawner = LeafSpawner.fromBuilt(parents);
     }
 
     @Override
@@ -49,17 +50,17 @@ public class MobType implements HasFilename {
         return obj instanceof MobType other && this.uuid.equals(other.uuid);
     }
 
-    public MobTypeSpawnerInBiome getBiomeSpawner(ExtendsMob extendsMob, BuiltSpawner biomeSpawner) {
-        BuiltSpawner spawner = BuiltSpawner.fromBuilt(List.of(biomeSpawner, this.spawner));
+    public LeafSpawner getBiomeSpawner(LeafSpawner biomeSpawner) {
+        return LeafSpawner.fromBuilt(List.of(biomeSpawner, this.spawner));
+    }
+
+    public MobTypeSpawnerInBiome getBiomeSpawner(ExtendsMob extendsMob, LeafSpawner biomeSpawner) {
+        LeafSpawner spawner = getBiomeSpawner(biomeSpawner);
         return new MobTypeSpawnerInBiome(this, extendsMob, spawner);
     }
 
     public MobUUID getId() {
         return this.uuid;
-    }
-
-    public BuiltSpawner getRawSpawner() {
-        return this.spawner;
     }
 
     @Override
