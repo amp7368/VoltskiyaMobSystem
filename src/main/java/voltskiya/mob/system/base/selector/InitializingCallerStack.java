@@ -51,9 +51,7 @@ public class InitializingCallerStack {
         selectorSet.remove(selectorStack.remove(lastIndex));
     }
 
-    public Set<SpawnSelector> copyExtends(SpawnSelector selector) {
-        Set<SpawnSelector> copy = new HashSet<>(selectorSet);
-        copy.add(selector);
-        return copy;
+    public Set<SpawnSelector> copyExtends() {
+        return new HashSet<>(selectorSet);
     }
 }

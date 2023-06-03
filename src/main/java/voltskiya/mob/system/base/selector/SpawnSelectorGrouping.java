@@ -22,7 +22,8 @@ public class SpawnSelectorGrouping {
     }
 
     public void init() throws CircularDependencyException {
-        this.init(new InitializingCallerStack());
+        InitializingCallerStack callerStack = new InitializingCallerStack();
+        this.init(callerStack);
     }
 
     @NotNull
@@ -37,12 +38,8 @@ public class SpawnSelectorGrouping {
         for (SpawnSelectorUUID uuid : this.extendsSpawnSelector) {
             SpawnSelector selector = uuid.mapped();
             callerStack.pushSelector(selector);
-            Set<LeafSpawner> extendsClause = selector.getExtendsClause().init(callerStack);
-            if (extendsClause.isEmpty()) {
-                leaves.add(new LeafSpawner(callerStack.copyExtends(selector)));
-            } else {
-                leaves.addAll(extendsClause);
-            }
+            selector.getExtendsClause().init(callerStack);
+            leaves.add(new LeafSpawner(callerStack.copyExtends()));
             callerStack.popSelector();
         }
         callerStack.popGroup();

@@ -13,7 +13,6 @@ public class FlyingModifier extends SpawningModifier<FlyingModifierConfig> {
 
     @Override
     public void preModifyEntity() {
-        System.err.println("premodified! :D");
         context.setLocation(config.getNewLocation());
     }
 

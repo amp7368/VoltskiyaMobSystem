@@ -3,4 +3,4 @@ version: 1.0
 main: voltskiya.mob.system.VoltskiyaPlugin
 api-version: 1.19
 authors: [ appleptr16 ]
-softdepend: [ LoadDependencies, VoltPluginManager, AppleMCUtil, DecodingNms, VoltskiyaUtilities,VoltskiyaWebserver ]
+softdepend: [ LoadDependencies, VoltPluginManager, AppleMCUtil, DecodingNms, VoltskiyaUtilities,VoltskiyaWebserver, WorldGuard ]

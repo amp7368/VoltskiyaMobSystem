@@ -17,6 +17,7 @@ import voltskiya.mob.system.base.selector.ExtendsMob;
 import voltskiya.mob.system.base.spawner.BuiltSpawner;
 import voltskiya.mob.system.base.spawner.LeafSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
+import voltskiya.mob.system.player.region.RegionUtil;
 import voltskiya.mob.system.player.world.mob.ShouldSpawningResult;
 import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.spawn.config.RegenConfig;
@@ -190,7 +191,11 @@ public class WorldRegenTask implements Runnable {
             return;
         }
         locationToTry = map.config.randomGroundLocation(timings);
-        if (locationToTry == null) setDone();
+        if (locationToTry == null) {
+            setDone();
+            return;
+        }
+        if (RegionUtil.isInRegion(locationToTry)) setDone();
     }
 
 

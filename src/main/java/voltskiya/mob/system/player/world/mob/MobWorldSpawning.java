@@ -12,6 +12,7 @@ import voltskiya.mob.system.base.biome.BiomeType;
 import voltskiya.mob.system.base.mob.MobType;
 import voltskiya.mob.system.base.spawner.LeafSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
+import voltskiya.mob.system.player.region.RegionUtil;
 import voltskiya.mob.system.spawn.config.RegenConfig;
 import voltskiya.mob.system.storage.mob.DStoredMob;
 import voltskiya.mob.system.storage.mob.MobStorage;
@@ -21,6 +22,8 @@ public class MobWorldSpawning {
     public static void spawnMobs(Collection<DStoredMob> mobs) {
         List<DStoredMob> mobsToAddBack = new ArrayList<>();
         for (DStoredMob storedMob : mobs) {
+            if (RegionUtil.isInRegion(storedMob.getLocation())) continue; // don't spawn mobs in regions
+
             long spawnDelay = trySpawn(storedMob).getSpawnDelay();
             if (spawnDelay > Bukkit.getCurrentTick()) {
                 storedMob.setSpawnDelay(spawnDelay);
@@ -29,6 +32,7 @@ public class MobWorldSpawning {
         }
         MobStorage.insertMobs(mobsToAddBack);
     }
+
 
     private static ShouldSpawningResult trySpawn(DStoredMob storedMob) {
         MobType mobType = storedMob.getMobType();

@@ -11,7 +11,7 @@ import voltskiya.mob.system.storage.world.WorldStorage;
 
 public class RegenStatsMap {
 
-    private static final int UPDATE_INTERVAL = 300;
+    private static final int UPDATE_INTERVAL = 1000;
     private static final AtomicInteger INCREMENT = new AtomicInteger();
     private static List<RegenStatsMap> maps;
     public final MapRegenConfig config;
@@ -54,7 +54,7 @@ public class RegenStatsMap {
         }
         this.density = BigDecimal.valueOf(mobCount)
             .divide(blockCount, Double.SIZE, RoundingMode.HALF_UP);
-        if (config.mobSpawningIsOn && this.desiredDensity.compareTo(this.density) <= 0) {
+        if (config.mobSpawningIsOn && this.desiredDensity.compareTo(this.density) > 0) {
             ModuleSpawning.get().logger().info("desiredDensity " + this.desiredDensity);
             ModuleSpawning.get().logger().info("density " + this.density);
         }

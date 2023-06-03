@@ -16,6 +16,11 @@ public class SpawnSelector implements HasFilename {
 
     protected Spawner implementation = new Spawner();
     protected List<ExtendsMob> extendsMob = new ArrayList<>();
+    /**
+     * extendsClause's name is poorly chosen.
+     * </p>
+     * The mobs in this clause extend this SpawnSelector rather than the other way around
+     */
     protected SpawnSelectorGrouping extendsClause = new SpawnSelectorGrouping();
     protected SpawnSelectorUUID uuid;
     protected String name;
