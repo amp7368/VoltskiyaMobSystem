@@ -4,7 +4,7 @@ import com.voltskiya.lib.AbstractModule;
 import com.voltskiya.lib.configs.factory.AppleConfigLike;
 import java.util.List;
 import org.bukkit.Bukkit;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.spawn.config.RegenConfig;
 import voltskiya.mob.system.spawn.config.RegenStatsMap;
 import voltskiya.mob.system.spawn.task.WorldRegenDaemon;
@@ -31,7 +31,7 @@ public class ModuleSpawning extends AbstractModule {
     @Override
     public void enable() {
         RegenConfig.load();
-        Bukkit.getScheduler().runTaskAsynchronously(VoltskiyaPlugin.get(), this::enableAsync);
+        Bukkit.getScheduler().runTaskAsynchronously(VoltskiyaMobPlugin.get(), this::enableAsync);
     }
 
     private void enableAsync() {

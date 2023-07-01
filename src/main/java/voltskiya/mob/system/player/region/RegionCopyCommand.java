@@ -10,20 +10,22 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.voltskiya.lib.acf.BaseCommand;
 import com.voltskiya.lib.acf.annotation.CommandAlias;
 import com.voltskiya.lib.acf.annotation.CommandCompletion;
+import com.voltskiya.lib.acf.annotation.CommandPermission;
 import com.voltskiya.lib.acf.annotation.Default;
 import com.voltskiya.lib.acf.annotation.Name;
 import java.util.Collections;
 import java.util.Map;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 
 @CommandAlias("region_copy")
+@CommandPermission("worldguard.region")
 public class RegionCopyCommand extends BaseCommand implements SendMessage {
 
     public RegionCopyCommand() {
-        VoltskiyaPlugin.get().registerCommand(this);
-        VoltskiyaPlugin.get().getCommandManager().getCommandCompletions().registerAsyncCompletion("world_guard_region", (c) -> {
+        VoltskiyaMobPlugin.get().registerCommand(this);
+        VoltskiyaMobPlugin.get().getCommandManager().getCommandCompletions().registerAsyncCompletion("world_guard_region", (c) -> {
             RegionManager regionManager = getRegionManager(c.getPlayer());
             if (regionManager == null) return Collections.emptyList();
             return regionManager.getRegions().keySet();

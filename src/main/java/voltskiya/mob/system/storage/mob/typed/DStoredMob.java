@@ -1,4 +1,4 @@
-package voltskiya.mob.system.storage.mob;
+package voltskiya.mob.system.storage.mob.typed;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -12,6 +12,8 @@ import voltskiya.mob.system.base.mob.MobType;
 import voltskiya.mob.system.base.mob.MobTypeDatabase;
 import voltskiya.mob.system.base.mob.MobUUID;
 import voltskiya.mob.system.storage.BaseEntity;
+import voltskiya.mob.system.storage.mob.MobUUIDConverter;
+import voltskiya.mob.system.storage.mob.StoredLocation;
 
 @Entity
 @Table(name = "stored_mob")

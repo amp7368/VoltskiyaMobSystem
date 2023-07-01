@@ -92,4 +92,8 @@ public class SpawnSelector implements HasFilename {
     public Stream<ExtendsMob> getExtendsMobStream() {
         return this.extendsMob.stream();
     }
+
+    public String getName() {
+        return this.name;
+    }
 }

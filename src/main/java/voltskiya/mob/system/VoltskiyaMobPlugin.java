@@ -10,16 +10,16 @@ import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.storage.ModuleStorage;
 import voltskiya.mob.system.temperature.ModuleTemperature;
 
-public class VoltskiyaPlugin extends AbstractVoltPlugin {
+public class VoltskiyaMobPlugin extends AbstractVoltPlugin {
 
     public static final int BLOCKS_IN_CHUNK = 16;
-    private static VoltskiyaPlugin instance;
+    private static VoltskiyaMobPlugin instance;
 
-    public VoltskiyaPlugin() {
+    public VoltskiyaMobPlugin() {
         instance = this;
     }
 
-    public static VoltskiyaPlugin get() {
+    public static VoltskiyaMobPlugin get() {
         return instance;
     }
 

@@ -25,7 +25,7 @@ public class CollisionRule {
         CollisionRuleTimings timings = new CollisionRuleTimings();
         float height = type.getHeight();
         float halfWidth = type.getWidth() / 2;
-        int checkRadius = (int) Math.ceil(Math.max(height * 2, halfWidth * 4));
+        int checkRadius = (int) Math.ceil(Math.max(height * 4, halfWidth * 8));
         timings.gatherWorld();
         List<VoxelShape> blocks = new ArrayList<>();
         for (int xi = -checkRadius; xi <= checkRadius; xi++) {

@@ -3,14 +3,14 @@ package voltskiya.mob.system.base.selector.api;
 import com.google.gson.JsonElement;
 import voltskiya.apple.utilities.database.base.JsonApiDataQuery;
 import voltskiya.apple.utilities.database.base.JsonDataName;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.base.selector.SpawnSelector;
 import voltskiya.mob.system.base.selector.SpawnSelectorDatabase;
 
 public class SpawnSelectorDatabaseQuery extends JsonApiDataQuery<SpawnSelector> {
 
     public SpawnSelectorDatabaseQuery(SpawnSelector selector) {
-        super(JsonDataName.create(VoltskiyaPlugin.get().getName(), "SpawnSelector", selector.getSaveFileName()), selector);
+        super(JsonDataName.create(VoltskiyaMobPlugin.get().getName(), "SpawnSelector", selector.getSaveFileName()), selector);
     }
 
 

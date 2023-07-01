@@ -1,7 +1,5 @@
 package voltskiya.mob.system.spawn.task;
 
-import com.voltskiya.lib.timings.scheduler.CancellingAsyncTask;
-import com.voltskiya.lib.timings.scheduler.VoltTask;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,18 +17,19 @@ import voltskiya.mob.system.base.spawner.LeafSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.player.region.RegionUtil;
 import voltskiya.mob.system.player.world.mob.ShouldSpawningResult;
+import voltskiya.mob.system.player.world.mob.SpawnerSummonResult;
 import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.spawn.config.RegenConfig;
 import voltskiya.mob.system.spawn.config.RegenStatsMap;
 import voltskiya.mob.system.spawn.util.CollisionRule;
-import voltskiya.mob.system.storage.mob.DStoredMob;
 import voltskiya.mob.system.storage.mob.MobStorage;
+import voltskiya.mob.system.storage.mob.typed.DStoredMob;
 
 public class WorldRegenTask implements Runnable {
 
     private static final int MOB_SPAWNERS_TO_TRY = 15;
     private static final int LOCAL_SPAWN_RATE_RADIUS = 150;
-    private static final int LOCAL_SPAWN_RATE_Y_RADIUS = 35;
+    private static final int LOCAL_SPAWN_RATE_Y_RADIUS = 150;
     private static final double LOCAL_SPAWN_RATE_BLOCKS =
         LOCAL_SPAWN_RATE_RADIUS * LOCAL_SPAWN_RATE_RADIUS * LOCAL_SPAWN_RATE_Y_RADIUS * Math.pow(2, 3);
     private static final double LOCAL_DENSITY_MULTIPLIER = 1 / 2d;
@@ -77,14 +76,14 @@ public class WorldRegenTask implements Runnable {
             if (isDone()) continue;
             timings.createMob();
             DStoredMob spawnedMob = new DStoredMob(mobToTry.mob().getId(), spawnContext.location());
+
             spawnedMob.setSpawnDelay(shouldSpawn.getSpawnDelay());
+            SpawnerSummonResult summonResult = mobToTry.spawner().prepare(spawnContext, false);
+            summonResult.spawn(mobToTry.mob(), false);
+
             logMobSpawn(spawnedMob);
             timings.createMob();
 
-            timings.insertMob();
-            CancellingAsyncTask task = VoltTask.cancelingAsyncTask(() -> MobStorage.insertMobs(List.of(spawnedMob)));
-            task.start(ModuleSpawning.get().getTaskManager());
-            timings.insertMob();
             timings.report();
             return;
         }

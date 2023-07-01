@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.storage.mob.MobStorage;
-import voltskiya.mob.system.storage.world.WorldStorage;
 
 public class RegenStatsMap {
 
@@ -17,12 +16,10 @@ public class RegenStatsMap {
     public final MapRegenConfig config;
     private final BigDecimal blockCount;
     private final BigDecimal desiredDensity;
-    private final double hitRatio;
     private BigDecimal density;
 
     public RegenStatsMap(MapRegenConfig config) {
         this.config = config;
-        this.hitRatio = WorldStorage.hitRatio(config.getWorld());
         this.blockCount = BigDecimal.valueOf((long) config.xRange() * config.yRange() * config.zRange());
         this.desiredDensity = BigDecimal.valueOf(config.density)
             .divide(BigDecimal.valueOf(10_000_000), Double.SIZE, RoundingMode.HALF_UP);

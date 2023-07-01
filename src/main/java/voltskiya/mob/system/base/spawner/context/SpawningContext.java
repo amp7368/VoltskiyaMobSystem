@@ -10,7 +10,7 @@ import voltskiya.mob.system.base.biome.BiomeUUID;
 import voltskiya.mob.system.base.spawner.modifier.CreateSpawningModifier;
 import voltskiya.mob.system.base.spawner.rule.temporal.TimeOfDay;
 import voltskiya.mob.system.player.world.mob.SpawnerSummonResult;
-import voltskiya.mob.system.storage.mob.DStoredMob;
+import voltskiya.mob.system.storage.mob.typed.DStoredMob;
 
 public final class SpawningContext {
 

@@ -1,6 +1,6 @@
 package voltskiya.mob.system.base.spawner.modifier.group;
 
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.base.mob.MobType;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifier;
@@ -22,7 +22,7 @@ public class GroupModifier extends SpawningModifier<GroupModifierFactory> {
     public void modifyEntity() {
         MobType mobType = result.getMobType();
         int mobCount = config.choose().getCount();
-        VoltskiyaPlugin.get().scheduleSyncDelayedTask(() -> {
+        VoltskiyaMobPlugin.get().scheduleSyncDelayedTask(() -> {
             for (int i = 1; i < mobCount; i++) {
                 result.spawn(mobType, (modifier) -> !(modifier instanceof GroupModifier));
             }

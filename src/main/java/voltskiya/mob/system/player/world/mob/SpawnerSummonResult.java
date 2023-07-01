@@ -8,7 +8,7 @@ import java.util.function.ToIntFunction;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.base.mob.MobType;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.base.spawner.modifier.SpawningModifier;
@@ -37,7 +37,7 @@ public class SpawnerSummonResult {
         this.sort(modifier -> modifier.getPreModifyPriority().value());
         this.preModify(filterModifications);
         this.sort(modifier -> modifier.getModifyPriority().value());
-        VoltskiyaPlugin.get()
+        VoltskiyaMobPlugin.get()
             .scheduleSyncDelayedTask(() -> mobType.getEntity().spawn(this.location, e -> this.modifyEntity(e, filterModifications)));
 
     }
@@ -46,15 +46,18 @@ public class SpawnerSummonResult {
     public void spawn(@NotNull MobType mobType, boolean skipModifications) {
         this.mobType = mobType;
         if (skipModifications) {
-            VoltskiyaPlugin.get()
+            VoltskiyaMobPlugin.get()
                 .scheduleSyncDelayedTask(() -> mobType.getEntity().spawn(this.location, entity -> this.mobType.tagMob(entity)));
             return;
         }
         this.sort(modifier -> modifier.getPreModifyPriority().value());
         this.preModify((m) -> true);
         this.sort(modifier -> modifier.getModifyPriority().value());
-        VoltskiyaPlugin.get()
-            .scheduleSyncDelayedTask(() -> mobType.getEntity().spawn(this.location, this::modifyEntity));
+        VoltskiyaMobPlugin.get()
+            .scheduleSyncDelayedTask(() -> {
+                mobType.getEntity().spawn(this.location, this::modifyEntity);
+                this.location.getChunk().load();
+            });
     }
 
     private void preModify(Predicate<SpawningModifier<?>> filterModifications) {

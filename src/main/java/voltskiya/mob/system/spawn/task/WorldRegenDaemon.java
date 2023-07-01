@@ -3,7 +3,7 @@ package voltskiya.mob.system.spawn.task;
 import com.voltskiya.lib.timings.scheduler.VoltTask;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.spawn.ModuleSpawning;
 import voltskiya.mob.system.spawn.config.RegenConfig;
 
@@ -68,7 +68,7 @@ public class WorldRegenDaemon {
     private void scheduleThisScheduler() {
         synchronized (this) {
             if (this.runningScheduler != null) return;
-            runningScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(VoltskiyaPlugin.get(), this::scheduleTask, 0, 1);
+            runningScheduler = Bukkit.getScheduler().runTaskTimerAsynchronously(VoltskiyaMobPlugin.get(), this::scheduleTask, 0, 1);
         }
     }
 }

@@ -1,7 +1,7 @@
 package voltskiya.mob.system.storage.mob;
 
 import org.bukkit.World;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.storage.world.WorldAdapter;
 
 public class SpawnMobsRegion {
@@ -14,10 +14,10 @@ public class SpawnMobsRegion {
     private final short worldId;
 
     public SpawnMobsRegion(int centerChunkX, int centerChunkZ, int radius, World world) {
-        this.lowerX = (centerChunkX - radius) * VoltskiyaPlugin.BLOCKS_IN_CHUNK;
-        this.upperX = (centerChunkX + radius) * VoltskiyaPlugin.BLOCKS_IN_CHUNK;
-        this.lowerZ = (centerChunkZ - radius) * VoltskiyaPlugin.BLOCKS_IN_CHUNK;
-        this.upperZ = (centerChunkZ + radius) * VoltskiyaPlugin.BLOCKS_IN_CHUNK;
+        this.lowerX = (centerChunkX - radius) * VoltskiyaMobPlugin.BLOCKS_IN_CHUNK;
+        this.upperX = (centerChunkX + radius) * VoltskiyaMobPlugin.BLOCKS_IN_CHUNK;
+        this.lowerZ = (centerChunkZ - radius) * VoltskiyaMobPlugin.BLOCKS_IN_CHUNK;
+        this.upperZ = (centerChunkZ + radius) * VoltskiyaMobPlugin.BLOCKS_IN_CHUNK;
         this.worldId = WorldAdapter.get().getWorld(world).worldId;
 
     }

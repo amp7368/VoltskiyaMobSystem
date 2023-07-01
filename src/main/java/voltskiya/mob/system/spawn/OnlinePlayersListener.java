@@ -6,14 +6,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.spawn.config.RegenConfig;
 import voltskiya.mob.system.spawn.task.WorldRegenDaemon;
 
 public class OnlinePlayersListener implements Listener {
 
     public OnlinePlayersListener() {
-        VoltskiyaPlugin.get().registerEvents(this);
+        VoltskiyaMobPlugin.get().registerEvents(this);
         if (count() <= maxPlayers()) WorldRegenDaemon.get().start();
     }
 

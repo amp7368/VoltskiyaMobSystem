@@ -79,4 +79,8 @@ public class Spawner {
     public void attributes(SpawningAttributes original) {
         original.join(SpawningAttributes.of(this.attributes));
     }
+
+    public List<SpawningModifierFactory> tempGetModifiers() {
+        return this.modifiers;
+    }
 }

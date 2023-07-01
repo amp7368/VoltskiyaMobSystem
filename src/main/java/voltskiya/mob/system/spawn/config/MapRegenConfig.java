@@ -14,7 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.spawn.task.WorldRegenTimings;
 import voltskiya.mob.system.storage.world.WorldAdapter;
 import voltskiya.mob.system.storage.world.WorldUUID;
@@ -25,7 +25,7 @@ public class MapRegenConfig {
     private static final byte RANDOM_LOCATION_HEIGHT = 75;
     private transient final Random random = new SecureRandom();
     private transient final List<Pair<Byte, Byte>> coords = new ArrayList<>(
-        VoltskiyaPlugin.BLOCKS_IN_CHUNK * VoltskiyaPlugin.BLOCKS_IN_CHUNK);
+        VoltskiyaMobPlugin.BLOCKS_IN_CHUNK * VoltskiyaMobPlugin.BLOCKS_IN_CHUNK);
     public UUID world;
     public String worldName;
     //todo set this in-game through command
@@ -62,8 +62,8 @@ public class MapRegenConfig {
         xMax = Math.max(x1, x2);
         zMin = Math.min(z1, z2);
         zMax = Math.max(z1, z2);
-        for (byte xi = 0; xi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; xi++) {
-            for (byte zi = 0; zi < VoltskiyaPlugin.BLOCKS_IN_CHUNK; zi++) {
+        for (byte xi = 0; xi < VoltskiyaMobPlugin.BLOCKS_IN_CHUNK; xi++) {
+            for (byte zi = 0; zi < VoltskiyaMobPlugin.BLOCKS_IN_CHUNK; zi++) {
                 coords.add(new Pair<>(xi, zi));
             }
         }

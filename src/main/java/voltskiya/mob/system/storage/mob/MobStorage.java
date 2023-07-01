@@ -6,8 +6,12 @@ import java.util.Set;
 import javax.persistence.EntityNotFoundException;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.player.world.mob.MobWorldSpawning;
-import voltskiya.mob.system.storage.mob.query.QDStoredMob;
+import voltskiya.mob.system.storage.mob.clone.DMobClone;
+import voltskiya.mob.system.storage.mob.clone.query.QDMobClone;
+import voltskiya.mob.system.storage.mob.typed.DStoredMob;
+import voltskiya.mob.system.storage.mob.typed.query.QDStoredMob;
 import voltskiya.mob.system.storage.world.WorldAdapter;
 
 public class MobStorage {
@@ -17,13 +21,25 @@ public class MobStorage {
     }
 
     public static synchronized void spawnMobs(SpawnMobsRegion region) {
-        Set<DStoredMob> result;
-        result = new HashSet<DStoredMob>(queryRegion(region).findList());
-        result.removeIf(mob -> !mob.delete());
-        MobWorldSpawning.spawnMobs(result);
+        Set<DStoredMob> typedMobs = new HashSet<>(queryTypedRegion(region).findList());
+        typedMobs.removeIf(mob -> !mob.delete());
+        Set<DMobClone> clonedMobs = new HashSet<>(queryClonedRegion(region).findList());
+        clonedMobs.removeIf(mob -> !mob.delete());
+
+        MobWorldSpawning.spawnTypedMobs(typedMobs);
+        VoltskiyaMobPlugin.get().scheduleSyncDelayedTask(() -> clonedMobs.forEach(DMobClone::spawn));
     }
 
-    private static QDStoredMob queryRegion(SpawnMobsRegion region) {
+    private static QDMobClone queryClonedRegion(SpawnMobsRegion region) {
+        return new QDMobClone()
+            .where().and()
+            .location.world.eq(region.getWorldId())
+            .location.x.between(region.getLowerX(), region.getUpperX())
+            .location.z.between(region.getLowerZ(), region.getUpperZ())
+            .endAnd();
+    }
+
+    private static QDStoredMob queryTypedRegion(SpawnMobsRegion region) {
         return new QDStoredMob()
             .where().and()
             .location.world.eq(region.getWorldId())

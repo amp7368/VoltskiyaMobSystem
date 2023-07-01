@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 import voltskiya.mob.system.base.biome.BiomeDatabases;
 import voltskiya.mob.system.base.biome.BiomeType;
 import voltskiya.mob.system.base.mob.MobType;
@@ -14,17 +14,17 @@ import voltskiya.mob.system.base.spawner.LeafSpawner;
 import voltskiya.mob.system.base.spawner.context.SpawningContext;
 import voltskiya.mob.system.player.region.RegionUtil;
 import voltskiya.mob.system.spawn.config.RegenConfig;
-import voltskiya.mob.system.storage.mob.DStoredMob;
 import voltskiya.mob.system.storage.mob.MobStorage;
+import voltskiya.mob.system.storage.mob.typed.DStoredMob;
 
 public class MobWorldSpawning {
 
-    public static void spawnMobs(Collection<DStoredMob> mobs) {
+    public static void spawnTypedMobs(Collection<DStoredMob> typedMobs) {
         List<DStoredMob> mobsToAddBack = new ArrayList<>();
-        for (DStoredMob storedMob : mobs) {
+        for (DStoredMob storedMob : typedMobs) {
             if (RegionUtil.isInRegion(storedMob.getLocation())) continue; // don't spawn mobs in regions
 
-            long spawnDelay = trySpawn(storedMob).getSpawnDelay();
+            long spawnDelay = tryTypedSpawn(storedMob).getSpawnDelay();
             if (spawnDelay > Bukkit.getCurrentTick()) {
                 storedMob.setSpawnDelay(spawnDelay);
                 mobsToAddBack.add(storedMob);
@@ -33,8 +33,7 @@ public class MobWorldSpawning {
         MobStorage.insertMobs(mobsToAddBack);
     }
 
-
-    private static ShouldSpawningResult trySpawn(DStoredMob storedMob) {
+    private static ShouldSpawningResult tryTypedSpawn(DStoredMob storedMob) {
         MobType mobType = storedMob.getMobType();
 
         SpawningContext context = SpawningContext.create(storedMob);
@@ -70,7 +69,6 @@ public class MobWorldSpawning {
         String worldName = loc.getWorld().getName();
         String message = String.format("summon mob %s at %s %d %d %d", mobName, worldName, loc.getBlockX(), loc.getBlockY(),
             loc.getBlockZ());
-        VoltskiyaPlugin.get().getLogger().info(message);
+        VoltskiyaMobPlugin.get().getLogger().info(message);
     }
-
 }

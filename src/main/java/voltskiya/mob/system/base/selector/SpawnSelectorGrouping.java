@@ -54,4 +54,8 @@ public class SpawnSelectorGrouping {
     public String getName() {
         return this.formattedName;
     }
+
+    public void tempRemoveSpawnerTag(SpawnSelectorUUID uuid) {
+        this.extendsSpawnSelector.remove(uuid);
+    }
 }

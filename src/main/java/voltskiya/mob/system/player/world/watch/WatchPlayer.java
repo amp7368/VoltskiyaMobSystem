@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import voltskiya.apple.utilities.minecraft.player.PlayerUtils;
-import voltskiya.mob.system.VoltskiyaPlugin;
+import voltskiya.mob.system.VoltskiyaMobPlugin;
 
 public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
 
@@ -22,7 +22,7 @@ public class WatchPlayer implements MobWatchPlayer, WatchHasPlayer {
 
     public static void load() {
         Bukkit.getScheduler()
-            .scheduleSyncRepeatingTask(VoltskiyaPlugin.get(), WatchPlayer::tickAll, 1, 2 * 20);
+            .scheduleSyncRepeatingTask(VoltskiyaMobPlugin.get(), WatchPlayer::tickAll, 1, 2 * 20);
 
     }
 

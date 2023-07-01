@@ -14,7 +14,11 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import voltskiya.mob.system.base.ModuleBase;
+import voltskiya.mob.system.base.selector.SpawnSelector;
 import voltskiya.mob.system.base.selector.SpawnSelectorGrouping;
+import voltskiya.mob.system.base.selector.SpawnSelectorUUID;
+import voltskiya.mob.system.base.spawner.modifier.SpawningModifierFactory;
+import voltskiya.mob.system.base.spawner.modifier.group.GroupModifierFactory;
 
 public class MobTypeDatabase {
 
@@ -31,6 +35,19 @@ public class MobTypeDatabase {
             mobs.put(mob.getId(), mob);
             nameToMob.put(mob.getName(), mob.getId());
         }
+        for (MobType mob : mobs.values()) {
+            for (SpawnSelectorUUID spawnerTag : mob.getSpawnerTags().getSpawnerTags()) {
+                SpawnSelector mapped = spawnerTag.mapped();
+                if (mapped.getName().startsWith("generated_groups")) {
+                    List<SpawningModifierFactory> mods = mapped.getImplementation().tempGetModifiers();
+                    if (mods.size() == 1 && mods.get(0) instanceof GroupModifierFactory) {
+                        mob.getSpawnerTags().tempRemoveSpawnerTag(mapped.getUUID());
+                        manager.saveInFolderNow(mob);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @NotNull
@@ -42,12 +59,6 @@ public class MobTypeDatabase {
     public static MobType getMobType(MobUUID uuid) {
         synchronized (mobs) {
             return mobs.get(uuid);
-        }
-    }
-
-    private static MobUUID getMobUUID(String mobName) {
-        synchronized (nameToMob) {
-            return nameToMob.get(mobName);
         }
     }
 
